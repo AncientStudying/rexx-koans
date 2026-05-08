@@ -1,0 +1,90 @@
+#!/usr/bin/env regina
+/* bin/lint_citations — scan every koan for a Cowlishaw citation.
+ *
+ * Contract: specs/001-m1-smoke-test/contracts/lint_citations.md.
+ * A valid citation has the form: Cowlishaw §<section>, p. <page>
+ *   <section> = digits.digits or digits.digits.digits
+ *   <page>    = one or more digits
+ * Exit 0 if every koan contains at least one valid citation; exit 1 on any
+ * missing citation or if no koan files exist.
+ */
+
+listing = '/tmp/lint_citations.'RANDOM(1, 99999)'.'TIME('S')'.list'
+ADDRESS SYSTEM 'ls koans 2>/dev/null >' listing
+
+files. = ''
+files.0 = 0
+DO WHILE LINES(listing) > 0
+  name = STRIP(LINEIN(listing))
+  IF name = '' THEN ITERATE
+  IF RIGHT(name, 5) \= '.rexx' THEN ITERATE
+  files.0 = files.0 + 1
+  i = files.0
+  files.i = 'koans/'name
+END
+CALL STREAM listing, 'C', 'CLOSE'
+ADDRESS SYSTEM 'rm -f' listing
+
+IF files.0 = 0 THEN DO
+  SAY '[lint] koans/ is empty (no koans to lint).'
+  EXIT 1
+END
+
+failed = 0
+DO i = 1 TO files.0
+  path = files.i
+  found = 0
+  DO WHILE LINES(path) > 0
+    line = LINEIN(path)
+    IF check_citation(line) THEN DO
+      found = 1
+      LEAVE
+    END
+  END
+  CALL STREAM path, 'C', 'CLOSE'
+
+  IF found THEN
+    SAY '[lint]' path '... OK'
+  ELSE DO
+    SAY '[lint]' path '... MISSING'
+    failed = failed + 1
+  END
+END
+
+IF failed = 0 THEN DO
+  SAY '[lint] All citations valid.'
+  EXIT 0
+END
+
+SAY '[lint]' failed 'of' files.0 'koan(s) failed citation check.'
+EXIT 1
+
+check_citation: PROCEDURE
+  PARSE ARG line
+  marker = 'Cowlishaw §'
+  p1 = POS(marker, line)
+  IF p1 = 0 THEN RETURN 0
+  section_start = p1 + LENGTH(marker)
+
+  p2 = POS(', p. ', line, section_start)
+  IF p2 = 0 THEN RETURN 0
+  section = SUBSTR(line, section_start, p2 - section_start)
+  IF \is_section(section) THEN RETURN 0
+
+  page_start = p2 + 5
+  digits = 0
+  DO j = page_start TO LENGTH(line)
+    IF \DATATYPE(SUBSTR(line, j, 1), 'W') THEN LEAVE
+    digits = digits + 1
+  END
+  IF digits = 0 THEN RETURN 0
+  RETURN 1
+
+is_section: PROCEDURE
+  PARSE ARG s
+  IF s = '' THEN RETURN 0
+  IF POS('.', s) = 0 THEN RETURN 0
+  IF LEFT(s, 1) = '.' | RIGHT(s, 1) = '.' THEN RETURN 0
+  IF POS('..', s) > 0 THEN RETURN 0
+  IF VERIFY(s, '0123456789.') \= 0 THEN RETURN 0
+  RETURN 1
