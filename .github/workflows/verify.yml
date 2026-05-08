@@ -1,0 +1,37 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Regina (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y regina-rexx
+
+      - name: Install Regina (macOS)
+        if: matrix.os == 'macos-latest'
+        run: brew install regina-rexx
+
+      - name: Show Regina version
+        run: regina --version
+
+      - name: Verify solutions
+        run: regina bin/verify_solutions
+
+      - name: Lint citations
+        run: regina bin/lint_citations

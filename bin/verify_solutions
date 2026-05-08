@@ -1,0 +1,54 @@
+#!/usr/bin/env regina
+/* bin/verify_solutions — run every solution file and require all to pass.
+ *
+ * Contract: specs/001-m1-smoke-test/contracts/verify_solutions.md.
+ * Exit 0 if every solution exits 0; exit 1 on any failure or if no solutions exist.
+ */
+
+listing = '/tmp/verify_solutions.'RANDOM(1, 99999)'.'TIME('S')'.list'
+ADDRESS SYSTEM 'ls solutions/*.rexx 2>/dev/null >' listing
+
+files. = ''
+files.0 = 0
+DO WHILE LINES(listing) > 0
+  path = STRIP(LINEIN(listing))
+  IF path = '' THEN ITERATE
+  files.0 = files.0 + 1
+  i = files.0
+  files.i = path
+END
+CALL STREAM listing, 'C', 'CLOSE'
+ADDRESS SYSTEM 'rm -f' listing
+
+IF files.0 = 0 THEN DO
+  SAY '[verify] solutions/ is empty (no solutions to verify).'
+  EXIT 1
+END
+
+failed = 0
+DO i = 1 TO files.0
+  path = files.i
+  out = '/tmp/verify_solutions.'RANDOM(1, 99999)'.'TIME('S')'.out'
+  ADDRESS SYSTEM 'regina' path '>' out '2>&1'
+  rc_solution = RC
+
+  IF rc_solution = 0 THEN
+    SAY '[verify]' path '... PASS'
+  ELSE DO
+    SAY '[verify]' path '... FAIL'
+    DO WHILE LINES(out) > 0
+      SAY '[verify]  ' STRIP(LINEIN(out), 'T')
+    END
+    CALL STREAM out, 'C', 'CLOSE'
+    failed = failed + 1
+  END
+  ADDRESS SYSTEM 'rm -f' out
+END
+
+IF failed = 0 THEN DO
+  SAY '[verify] All solutions pass.'
+  EXIT 0
+END
+
+SAY '[verify]' failed 'of' files.0 'solution(s) failed.'
+EXIT 1
