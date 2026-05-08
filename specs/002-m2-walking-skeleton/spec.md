@@ -5,6 +5,14 @@
 **Status**: Draft
 **Input**: User description: "M2 — Walking Skeleton"
 
+## Clarifications
+
+### Session 2026-05-08
+
+- Q: Teaching comment block granularity — one block per individual assertion, or one per logical concept group of related assertions? → A: One block per concept group (placed before the first assertion of the cluster); subsequent assertions in the same group do not need their own block.
+- Q: Where does the pilgrim-voice subtitle in the station list live? → A: Each koan file declares its own subtitle in a structured header comment; `lib/stations.rexx` extracts subtitles by reading the koan files.
+- Q: Should CI exercise the production runner end-to-end, beyond `verify_solutions` and `lint_citations`? → A: Yes — CI runs `lib/pilgrimage.rexx` against the fully-solved Stage I curriculum on both platforms, asserts exit 0 with a benediction, AND verifies the captured runner stdout is byte-identical to a recorded fixture committed in the repo (cross-platform fingerprint).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Walk the Foundation Stage end-to-end (Priority: P1)
@@ -182,7 +190,11 @@ review concern.
 - **FR-007**: The station display module (`lib/stations.rexx`) MUST
   render a fixed-pitch list of all stations with status markers
   `[  ok  ]`, `[ here ]`, and blank, plus a one-line summary of stations
-  walked and the location of any failure, per `PLAN.md` §11.
+  walked and the location of any failure, per `PLAN.md` §11. Each
+  station's pilgrim-voice subtitle MUST be sourced from a structured
+  header comment in the corresponding koan file (extracted by
+  `lib/stations.rexx` at render time); no separate subtitle registry
+  is maintained.
 - **FR-008**: The station display MUST use no ANSI color escapes by
   default; M2 ships monochrome.
 - **FR-009**: A POSIX shell launcher (`bin/pilgrimage`) MUST exist and
@@ -192,9 +204,12 @@ review concern.
   Stage I, with at least one matching solution file in `solutions/` for
   each.
 - **FR-011**: Every Stage I koan MUST contain a teaching comment block
-  before each assertion with: a concept heading, two-to-six sentences
-  of prose, and a `Cowlishaw §N.N, p. NN` citation per Constitution
-  Principle III.
+  before the first assertion of each concept group, with: a concept
+  heading, two-to-six sentences of prose, and a `Cowlishaw §N.N, p. NN`
+  citation per Constitution Principle III. Subsequent assertions within
+  the same concept group do not require their own teaching block. A
+  concept group is a contiguous set of assertions that exercise one
+  named concept (e.g., "concatenation by abuttal vs. by blank").
 - **FR-012**: `bin/verify_solutions` MUST run every file in `solutions/`
   through the assertion machinery and fail if any solution fails any
   assertion.
@@ -202,9 +217,17 @@ review concern.
   fail if any koan is missing a well-formed `Cowlishaw §N.N, p. NN`
   citation.
 - **FR-014**: The CI workflow (`.github/workflows/verify.yml`) MUST run
-  `verify_solutions` and `lint_citations` on both `ubuntu-latest` and
-  `macos-latest` on every push and pull request to `main`, and MUST be
-  green before any merge to `main`.
+  `verify_solutions`, `lint_citations`, AND a runner end-to-end smoke
+  step on both `ubuntu-latest` and `macos-latest` on every push and
+  pull request to `main`, and MUST be green before any merge to
+  `main`.
+- **FR-017**: The CI runner smoke step MUST execute `lib/pilgrimage.rexx`
+  against the fully-solved Stage I curriculum (sourced from
+  `solutions/`), assert exit code 0, assert the closing benediction is
+  present in the captured stdout, and verify that the captured stdout
+  is byte-identical to a recorded fixture committed in the repository.
+  The same fixture MUST satisfy both the macOS and Ubuntu jobs (single
+  cross-platform fingerprint).
 - **FR-015**: `koans/path_to_enlightenment.rexx` MUST list the six Stage I
   koans in the curricular order specified in `PLAN.md` §4 and serve as
   the single source of truth for runner ordering.
@@ -227,12 +250,17 @@ review concern.
   file enumerating the six Stage I koans for the runner to walk.
 - **Stage I Koans** (`koans/00_about_asserts.rexx` through
   `koans/05_about_say.rexx`): The six teaching koans of Stage I, each
-  with teaching comments, citations, and at least one FILL_ME_IN blank.
+  with teaching comments, citations, a structured header comment
+  declaring the koan's pilgrim-voice subtitle, and at least one
+  FILL_ME_IN blank.
 - **Stage I Solutions** (`solutions/00_about_asserts.rexx` through
   `solutions/05_about_say.rexx`): Matching passing implementations for
   each Stage I koan, verified by `bin/verify_solutions`.
 - **Pilgrimage Launcher** (`bin/pilgrimage`): POSIX shell launcher that
   invokes the runner with appropriate environment for macOS and Linux.
+- **Runner Smoke Fixture**: A recorded reference of the runner's stdout
+  for a fully-solved Stage I walk, committed in the repository and
+  consumed by the CI runner smoke step (FR-017) on both platforms.
 
 ## Success Criteria *(mandatory)*
 
@@ -257,9 +285,10 @@ review concern.
   by replacing FILL_ME_IN values alone, without modifying any other line
   of the koan — confirmed by `bin/verify_solutions` against the matching
   solution files.
-- **SC-006**: The station display renders identically (byte-for-byte
-  equivalent for the same input state) on macOS and Ubuntu, confirmed
-  by CI.
+- **SC-006**: The runner's stdout for a fully-solved Stage I walk is
+  byte-identical on macOS and Ubuntu, confirmed by the CI runner smoke
+  step (FR-017) matching a single committed reference fixture on both
+  platforms.
 
 ## Assumptions
 
