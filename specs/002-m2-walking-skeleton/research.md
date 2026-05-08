@@ -245,8 +245,9 @@ Concrete rules adopted by `lib/pilgrimage.rexx` and `lib/stations.rexx`:
 manifest. Is it executable REXX (loaded as a stem) or a static data
 file? How is it consumed?
 
-**Decision**: **Executable REXX that populates a `koans.` stem and
-`EXIT`s.** The runner loads it via `CALL`:
+**Decision**: **REXX source file containing only stem assignments
+and a trailing `RETURN`, sourced by the runner via LINEIN +
+INTERPRET.** The file:
 
 ```rexx
 /* koans/path_to_enlightenment.rexx — Stage I order. */
@@ -260,24 +261,40 @@ koans.6 = 'koans/05_about_say.rexx'
 RETURN
 ```
 
-The runner does:
+The runner reads the file with `LINEIN` and `INTERPRET`s the
+concatenated source in its own scope:
 
 ```rexx
-CALL 'koans/path_to_enlightenment.rexx'
+src = ''
+DO WHILE LINES('koans/path_to_enlightenment.rexx') > 0
+  src = src || LINEIN('koans/path_to_enlightenment.rexx') || ';'
+END
+INTERPRET src
 DO i = 1 TO koans.0
   ...
 END
 ```
+
+**Why not `CALL`**: An earlier draft of this decision specified
+`CALL 'koans/path_to_enlightenment.rexx'` on the assumption that an
+external `CALL` shares variable scope with the caller when the
+target has no `PROCEDURE` declaration. This is false in Regina (and
+in ANSI X3.274 conformant REXX): an external file invoked via
+`CALL` has its own variable space. The implementation switched to
+LINEIN + INTERPRET, which puts the assignments back into the
+caller's scope. The file format and the contract intent ("manifest
+is data; appending a koan touches one file") are unchanged. See
+`docs/DESIGN_DECISIONS_M2.md` ADR-007 for the durable record of
+this mechanism choice.
 
 **Rationale**:
 - A REXX stem is the natural in-language data structure; the runner
   already speaks REXX.
 - Stages append to the manifest by adding lines and bumping `koans.0`
   — trivial diff in future milestones.
-- A `CALL`'d file shares variable scope with the runner (no
-  PROCEDURE), so the stem is directly accessible. This is the one
-  place we deliberately use shared-scope semantics; the manifest is
-  data, not behavior.
+- INTERPRET in the caller's scope makes the stem directly accessible.
+  This is the one place we deliberately use shared-scope semantics;
+  the manifest is data, not behavior.
 - Makes a missing or malformed manifest produce a clear REXX-level
   error (uninitialized stem, empty stem) that the runner can detect
   and surface in pilgrim voice.
@@ -288,6 +305,8 @@ END
 - **Hardcoded list inside `lib/pilgrimage.rexx`** — rejected. Edits to
   the curriculum order become edits to the runner; violates the
   separation `PLAN.md` §4 implies between curriculum and runner.
+- **External `CALL` with shared scope** — rejected. Not supported by
+  Regina or ANSI REXX (see "Why not `CALL`" above).
 
 ---
 
@@ -416,7 +435,8 @@ verbatim by M2:
 - **ADR-001** — Koan loading via subprocess. M2 keeps subprocess.
 - **ADR-002** — No shared assertion state across runner/koan. M2
   keeps subprocess isolation; the path manifest is the only deliberate
-  shared-scope `CALL` (Decision 5 above; manifest is data, not code).
+  shared-scope load (Decision 5 above; manifest is data, not code,
+  sourced by LINEIN + INTERPRET).
 - **ADR-003** — `SIGNAL ON SYNTAX` is a koan-internal concern only.
 - **ADR-004** — FILL_ME_IN detection by literal string comparison
   to `'FILL_ME_IN'` continues unchanged. M2's expanded vocabulary
@@ -438,7 +458,7 @@ verbatim by M2:
 | 2 | Subtitle extraction format | `Station: <text>` directive in koan leading comment |
 | 3 | Resume mechanic | Walk-and-discover, single pass |
 | 4 | Cross-platform stdout fingerprint | ASCII-only, LF, no volatiles, `LC_ALL=C` in launcher |
-| 5 | Path manifest format | Executable REXX populating a `koans.` stem |
+| 5 | Path manifest format | REXX stem-assignment file, sourced via LINEIN + INTERPRET |
 | 6 | First-run onboarding | Banner + station list, no separate welcome |
 | 7 | README structure | Four sections: what it is / install / walk / read further |
 | 8 | Solution-first work order | Six vertical slices in curriculum order |

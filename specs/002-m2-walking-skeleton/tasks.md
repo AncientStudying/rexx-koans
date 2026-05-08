@@ -36,8 +36,8 @@ live at `lib/`, `bin/`, `koans/`, `solutions/`. Fixtures at
 
 **Purpose**: Clear M1 throwaway artifacts and establish M2 directory layout.
 
-- [ ] T001 Remove M1 throwaway prototype files: delete `koans/00_about_smoke.rexx` and `solutions/00_about_smoke.rexx` (per spec Assumptions; PLAN.md §10)
-- [ ] T002 [P] Create the `tests/fixtures/` directory at the repository root (placeholder, real fixture content arrives in T028)
+- [X] T001 Remove M1 throwaway prototype files: delete `koans/00_about_smoke.rexx` and `solutions/00_about_smoke.rexx` (per spec Assumptions; PLAN.md §10)
+- [X] T002 [P] Create the `tests/fixtures/` directory at the repository root (placeholder, real fixture content arrives in T028)
 
 ---
 
@@ -49,12 +49,12 @@ complete before any Stage I content can be written or walked.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 Expand assertion library `lib/meditation.rexx` to a four-kind dispatcher (`'eq'`, `'neq'`, `'true'`, `'datatype'`) per contracts/meditation.md, preserving the M1 FILL_ME_IN literal-string detection (ADR-004) and the `CALL kind, arg1, arg2, koan_file, n, line` signature (Decision 1, research.md)
-- [ ] T004 [P] Create the path manifest `koans/path_to_enlightenment.rexx` populating `koans.0 = 6` and `koans.1`–`koans.6` with the Stage I files in curriculum order (Decision 5, research.md; contracts/path_manifest.md)
-- [ ] T005 [P] Create the POSIX shell launcher `bin/pilgrimage` per contracts/pilgrimage_launcher.md (locate `regina`, resolve repo root, `LC_ALL=C`, `exec regina lib/pilgrimage.rexx "$@"`); set executable bit
-- [ ] T006 Implement runner skeleton `lib/pilgrimage.rexx` per contracts/runner.md core behavior (steps 1–3): `CALL` the manifest, validate it is non-empty, walk each koan via `regina <path>` subprocess capturing stdout+stderr to a temp file, stop on first non-zero RC and emit the captured stdout, exit 0 on full pass, exit non-zero on failure with the koan's RC. Banner / station list / benediction are deferred to later phases. Depends on T003, T004
-- [ ] T007 [P] Audit and update `bin/verify_solutions` to handle the four-kind dispatcher signature: confirm subprocess + RC-based pass/fail logic still works with the new `CALL m kind, arg1, arg2, n` koan-side pattern; update only if the M1 implementation hard-coded smoke paths or single-kind assumptions (contracts/verify_solutions.md)
-- [ ] T008 [P] Extend `bin/lint_citations` to also verify each koan has exactly one `Station: <text>` directive in its leading comment block, in addition to the existing `Cowlishaw §N.N, p. NN` citation check (Decision 2, research.md; contracts/lint_citations.md). Failure reasons must be specific (`MISSING Station: directive`, `MULTIPLE Station: directives`)
+- [X] T003 Expand assertion library `lib/meditation.rexx` to a four-kind dispatcher (`'eq'`, `'neq'`, `'true'`, `'datatype'`) per contracts/meditation.md, preserving the M1 FILL_ME_IN literal-string detection (ADR-004) and the `CALL kind, arg1, arg2, koan_file, n, line` signature (Decision 1, research.md)
+- [X] T004 [P] Create the path manifest `koans/path_to_enlightenment.rexx` populating `koans.0 = 6` and `koans.1`–`koans.6` with the Stage I files in curriculum order (Decision 5, research.md; contracts/path_manifest.md)
+- [X] T005 [P] Create the POSIX shell launcher `bin/pilgrimage` per contracts/pilgrimage_launcher.md (locate `regina`, resolve repo root, `LC_ALL=C`, `exec regina lib/pilgrimage.rexx "$@"`); set executable bit
+- [X] T006 Implement runner skeleton `lib/pilgrimage.rexx` per contracts/runner.md core behavior (steps 1–3): `CALL` the manifest, validate it is non-empty, walk each koan via `regina <path>` subprocess capturing stdout+stderr to a temp file, stop on first non-zero RC and emit the captured stdout, exit 0 on full pass, exit non-zero on failure with the koan's RC. Banner / station list / benediction are deferred to later phases. Depends on T003, T004
+- [X] T007 [P] Audit and update `bin/verify_solutions` to handle the four-kind dispatcher signature: confirm subprocess + RC-based pass/fail logic still works with the new `CALL m kind, arg1, arg2, n` koan-side pattern; update only if the M1 implementation hard-coded smoke paths or single-kind assumptions (contracts/verify_solutions.md)
+- [X] T008 [P] Extend `bin/lint_citations` to also verify each koan has exactly one `Station: <text>` directive in its leading comment block, in addition to the existing `Cowlishaw §N.N, p. NN` citation check (Decision 2, research.md; contracts/lint_citations.md). Failure reasons must be specific (`MISSING Station: directive`, `MULTIPLE Station: directives`)
 
 **Checkpoint**: Foundation ready — assertion dispatcher, manifest,
 launcher, minimal runner, extended lint and verify all present.
@@ -83,39 +83,39 @@ blanks (Constitution Principle I).
 
 ### Slice 1 — `00_about_asserts` (Meta: how the koans work)
 
-- [ ] T009 [P] [US1] Create `solutions/00_about_asserts.rexx` exercising every assertion kind (`'eq'`, `'neq'`, `'true'`, `'datatype'`); confirm it passes via `regina bin/verify_solutions`
-- [ ] T010 [P] [US1] Create `koans/00_about_asserts.rexx` by deriving FILL_ME_INs from `solutions/00_about_asserts.rexx`; include `Station: <subtitle>` directive and one `Cowlishaw §N.N, p. NN`-cited teaching block per concept group (FR-011); verify with `regina bin/lint_citations`. Depends on T009
+- [X] T009 [P] [US1] Create `solutions/00_about_asserts.rexx` exercising every assertion kind (`'eq'`, `'neq'`, `'true'`, `'datatype'`); confirm it passes via `regina bin/verify_solutions`
+- [X] T010 [P] [US1] Create `koans/00_about_asserts.rexx` by deriving FILL_ME_INs from `solutions/00_about_asserts.rexx`; include `Station: <subtitle>` directive and one `Cowlishaw §N.N, p. NN`-cited teaching block per concept group (FR-011); verify with `regina bin/lint_citations`. Depends on T009
 
 ### Slice 2 — `01_about_strings` (§2.1, §2.2 — everything is a string)
 
-- [ ] T011 [P] [US1] Create `solutions/01_about_strings.rexx` (string literals, length, single vs double quote, all values are strings); pass `verify_solutions`
-- [ ] T012 [P] [US1] Create `koans/01_about_strings.rexx` with FILL_ME_INs, `Station:` directive, teaching blocks per concept group with Cowlishaw §2.1 / §2.2 citations; pass `lint_citations`. Depends on T011
+- [X] T011 [P] [US1] Create `solutions/01_about_strings.rexx` (string literals, length, single vs double quote, all values are strings); pass `verify_solutions`
+- [X] T012 [P] [US1] Create `koans/01_about_strings.rexx` with FILL_ME_INs, `Station:` directive, teaching blocks per concept group with Cowlishaw §2.1 / §2.2 citations; pass `lint_citations`. Depends on T011
 
 ### Slice 3 — `02_about_variables` (§2.5 — assignment, uninitialized symbols, case)
 
-- [ ] T013 [P] [US1] Create `solutions/02_about_variables.rexx` (assignment, uninitialized symbol equals its uppercase name, `UPPER`/case behavior); pass `verify_solutions`
-- [ ] T014 [P] [US1] Create `koans/02_about_variables.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.5 citations; pass `lint_citations`. Depends on T013
+- [X] T013 [P] [US1] Create `solutions/02_about_variables.rexx` (assignment, uninitialized symbol equals its uppercase name, `UPPER`/case behavior); pass `verify_solutions`
+- [X] T014 [P] [US1] Create `koans/02_about_variables.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.5 citations; pass `lint_citations`. Depends on T013
 
 ### Slice 4 — `03_about_expressions` (§2.3 — arithmetic, comparison, logical, concatenation)
 
-- [ ] T015 [P] [US1] Create `solutions/03_about_expressions.rexx` (arithmetic operators, comparison `=`/`\=`/`==`, logical `&`/`|`/`\`, concatenation by abuttal vs. by blank); pass `verify_solutions`
-- [ ] T016 [P] [US1] Create `koans/03_about_expressions.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.3 citations covering each concept group; pass `lint_citations`. Depends on T015
+- [X] T015 [P] [US1] Create `solutions/03_about_expressions.rexx` (arithmetic operators, comparison `=`/`\=`/`==`, logical `&`/`|`/`\`, concatenation by abuttal vs. by blank); pass `verify_solutions`
+- [X] T016 [P] [US1] Create `koans/03_about_expressions.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.3 citations covering each concept group; pass `lint_citations`. Depends on T015
 
 ### Slice 5 — `04_about_clauses` (§2.4 — clauses, comments, continuation, semicolons)
 
-- [ ] T017 [P] [US1] Create `solutions/04_about_clauses.rexx` (clause-as-line, semicolon separator, comma continuation, `/* ... */` comments); pass `verify_solutions`
-- [ ] T018 [P] [US1] Create `koans/04_about_clauses.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.4 citations; pass `lint_citations`. Depends on T017
+- [X] T017 [P] [US1] Create `solutions/04_about_clauses.rexx` (clause-as-line, semicolon separator, comma continuation, `/* ... */` comments); pass `verify_solutions`
+- [X] T018 [P] [US1] Create `koans/04_about_clauses.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.4 citations; pass `lint_citations`. Depends on T017
 
 ### Slice 6 — `05_about_say` (§2.7 — output and expression evaluation)
 
-- [ ] T019 [P] [US1] Create `solutions/05_about_say.rexx` (`SAY` expression evaluation; concatenation in `SAY` context); pass `verify_solutions`
-- [ ] T020 [P] [US1] Create `koans/05_about_say.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.7 citations; pass `lint_citations`. Depends on T019
+- [X] T019 [P] [US1] Create `solutions/05_about_say.rexx` (`SAY` expression evaluation; concatenation in `SAY` context); pass `verify_solutions`
+- [X] T020 [P] [US1] Create `koans/05_about_say.rexx` with FILL_ME_INs, `Station:` directive, Cowlishaw §2.7 citations; pass `lint_citations`. Depends on T019
 
 ### Runner enrichment + onboarding
 
-- [ ] T021 [US1] Extend `lib/pilgrimage.rexx`: on full-pass loop completion (every station green) print the closing benediction `The pilgrim has walked the foundation. The path opens further.` and exit 0 (FR-004; Decision 6, research.md)
-- [ ] T022 [US1] Write/update `README.md` per Decision 7, research.md — four sections: What this is / Install Regina / Walk the path / Read further. Include the Internet Archive link to *The REXX Language* 2nd edition (FR-016)
-- [ ] T023 [US1] Manually validate quickstart.md Steps 1–4 on a fresh checkout: `./bin/pilgrimage` stops at koan 00; with all six koans hand-solved using only teaching comments, `./bin/pilgrimage` exits 0 and prints the benediction (US1 acceptance scenarios 1–3)
+- [X] T021 [US1] Extend `lib/pilgrimage.rexx`: on full-pass loop completion (every station green) print the closing benediction `The pilgrim has walked the foundation. The path opens further.` and exit 0 (FR-004; Decision 6, research.md)
+- [X] T022 [US1] Write/update `README.md` per Decision 7, research.md — four sections: What this is / Install Regina / Walk the path / Read further. Include the Internet Archive link to *The REXX Language* 2nd edition (FR-016)
+- [X] T023 [US1] Manually validate quickstart.md Steps 1–4 on a fresh checkout: `./bin/pilgrimage` stops at koan 00; with all six koans hand-solved using only teaching comments, `./bin/pilgrimage` exits 0 and prints the benediction (US1 acceptance scenarios 1–3)
 
 **Checkpoint**: Stage I curriculum is walkable end-to-end. The MVP
 pilgrim experience works on macOS. `verify_solutions` is 6/6 green
@@ -141,7 +141,7 @@ Phase 2; this phase is validation only — no new implementation should
 be required. If a defect is uncovered, it gets fixed inside
 `lib/pilgrimage.rexx`.
 
-- [ ] T024 [US2] Validate resume behavior end-to-end: solve koans 00–02 in working tree, leave 03 with one FILL_ME_IN, run `./bin/pilgrimage`, confirm the runner reports its first failure inside `koans/03_about_expressions.rexx`, exits non-zero, and emitted no FILL_ME_IN diagnostics for koans 00–02. Re-run with no source changes; stdout must be byte-identical to the first invocation (US2 acceptance scenarios 1–3; FR-002; SC-004)
+- [X] T024 [US2] Validate resume behavior end-to-end: solve koans 00–02 in working tree, leave 03 with one FILL_ME_IN, run `./bin/pilgrimage`, confirm the runner reports its first failure inside `koans/03_about_expressions.rexx`, exits non-zero, and emitted no FILL_ME_IN diagnostics for koans 00–02. Re-run with no source changes; stdout must be byte-identical to the first invocation (US2 acceptance scenarios 1–3; FR-002; SC-004)
 
 **Checkpoint**: Resume works as a natural property of the runner;
 the pilgrim's mid-pilgrimage re-run experience is verified.
@@ -162,9 +162,9 @@ summary line names the failure topic on a damaged run and is silent
 about damage on a clean run. `./bin/pilgrimage | od -c | grep -c '\\033'`
 must return 0 (no ANSI escapes).
 
-- [ ] T025 [P] [US3] Implement station-display module `lib/stations.rexx` per contracts/stations.md: `extract_subtitle(koan_path)` (line-by-line scan of the leading comment block for `Station: <text>`, 50-line safety bound, returns empty string if absent) and `render(station_records, total)` (fixed-pitch list with `[  ok  ]` / `[ here ]` / blank markers, topic column padded to max-width across the manifest, subtitle column, summary line with optional `Karma damaged at: <topic>.` clause). ASCII-only, LF, spaces (no tabs), no ANSI
-- [ ] T026 [US3] Wire station-display calls into `lib/pilgrimage.rexx` per contracts/runner.md: print the `THE PATH OF REXX` banner, accumulate `(seq, topic, subtitle, status)` records as the walk proceeds, after stop or completion render via `lib/stations.rexx`, then on failure emit the captured koan stdout indented to align with the station list, then the summary line. Subtitles are extracted from each koan file at render time (Decision 2, research.md). Depends on T025
-- [ ] T027 [US3] Confirm monochrome output: `./bin/pilgrimage | od -c | grep -c '\\033'` returns 0 in both passing and failing cases (US3 acceptance scenario 3; FR-008)
+- [X] T025 [P] [US3] Implement station-display module `lib/stations.rexx` per contracts/stations.md: `extract_subtitle(koan_path)` (line-by-line scan of the leading comment block for `Station: <text>`, 50-line safety bound, returns empty string if absent) and `render(station_records, total)` (fixed-pitch list with `[  ok  ]` / `[ here ]` / blank markers, topic column padded to max-width across the manifest, subtitle column, summary line with optional `Karma damaged at: <topic>.` clause). ASCII-only, LF, spaces (no tabs), no ANSI
+- [X] T026 [US3] Wire station-display calls into `lib/pilgrimage.rexx` per contracts/runner.md: print the `THE PATH OF REXX` banner, accumulate `(seq, topic, subtitle, status)` records as the walk proceeds, after stop or completion render via `lib/stations.rexx`, then on failure emit the captured koan stdout indented to align with the station list, then the summary line. Subtitles are extracted from each koan file at render time (Decision 2, research.md). Depends on T025
+- [X] T027 [US3] Confirm monochrome output: `./bin/pilgrimage | od -c | grep -c '\\033'` returns 0 in both passing and failing cases (US3 acceptance scenario 3; FR-008)
 
 **Checkpoint**: The runner's full pilgrim-facing output — banner +
 station list + diagnostic + summary + (on full pass) benediction —
@@ -177,10 +177,10 @@ matches contracts/runner.md exactly.
 **Purpose**: Lock the cross-platform contract (FR-014, FR-017, SC-006)
 and verify edge cases.
 
-- [ ] T028 Capture the runner stdout for a fully-solved Stage I walk into `tests/fixtures/runner_stdout.txt` per the procedure in quickstart.md "CI parity check" (build a `koans-solved/` working dir from `solutions/`, mirror the manifest with rewritten paths, `LC_ALL=C regina lib/pilgrimage.rexx > runner-out.txt`, `tr -d '\r' < runner-out.txt > tests/fixtures/runner_stdout.txt`, restore the original manifest). Verify ASCII-only, LF, no volatile values (Decision 4, research.md)
-- [ ] T029 Extend `.github/workflows/verify.yml` per contracts/ci_workflow.md: matrix `[ubuntu-latest, macos-latest]` with `fail-fast: false`; install Regina (apt on Ubuntu, brew on macOS); steps for `verify_solutions`, `lint_citations`, and the new runner-smoke + fingerprint step (build solved curriculum, run `LC_ALL=C regina lib/pilgrimage.rexx`, normalize line endings, `diff -u tests/fixtures/runner_stdout.txt`). Mismatch is hard fail. Depends on T028
-- [ ] T030 [P] Validate edge cases per spec Edge Cases: empty `koans/` (runner exits 1 with "The path is empty" sentence); missing koan referenced by manifest (runner exits 1 naming the missing station); syntax error inside a koan (runner surfaces Regina diagnostic and stops, runner itself does not crash); missing solution file (`bin/verify_solutions` fails loudly); missing citation in a koan (`bin/lint_citations` fails loudly); missing `Station:` directive (`bin/lint_citations` fails loudly)
-- [ ] T031 Run the full quickstart.md walkthrough end-to-end on a clean macOS clone, including the optional "CI parity check" section, and confirm SC-001 (under sixty minutes), SC-002 (under one second on fully solved), and SC-006 (fixture matches both platforms via the CI run)
+- [X] T028 Capture the runner stdout for a fully-solved Stage I walk into `tests/fixtures/runner_stdout.txt` per the procedure in quickstart.md "CI parity check" (build a `koans-solved/` working dir from `solutions/`, mirror the manifest with rewritten paths, `LC_ALL=C regina lib/pilgrimage.rexx > runner-out.txt`, `tr -d '\r' < runner-out.txt > tests/fixtures/runner_stdout.txt`, restore the original manifest). Verify ASCII-only, LF, no volatile values (Decision 4, research.md)
+- [X] T029 Extend `.github/workflows/verify.yml` per contracts/ci_workflow.md: matrix `[ubuntu-latest, macos-latest]` with `fail-fast: false`; install Regina (apt on Ubuntu, brew on macOS); steps for `verify_solutions`, `lint_citations`, and the new runner-smoke + fingerprint step (build solved curriculum, run `LC_ALL=C regina lib/pilgrimage.rexx`, normalize line endings, `diff -u tests/fixtures/runner_stdout.txt`). Mismatch is hard fail. Depends on T028
+- [X] T030 [P] Validate edge cases per spec Edge Cases: empty `koans/` (runner exits 1 with "The path is empty" sentence); missing koan referenced by manifest (runner exits 1 naming the missing station); syntax error inside a koan (runner surfaces Regina diagnostic and stops, runner itself does not crash); missing solution file (`bin/verify_solutions` fails loudly); missing citation in a koan (`bin/lint_citations` fails loudly); missing `Station:` directive (`bin/lint_citations` fails loudly)
+- [X] T031 Run the full quickstart.md walkthrough end-to-end on a clean macOS clone, including the optional "CI parity check" section, and confirm SC-001 (under sixty minutes), SC-002 (under one second on fully solved), and SC-006 (fixture matches both platforms via the CI run)
 
 ---
 

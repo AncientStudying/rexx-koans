@@ -1,12 +1,16 @@
 #!/usr/bin/env regina
-/* bin/lint_citations — scan every koan for a Cowlishaw citation.
+/* bin/lint_citations — verify each koan has a Cowlishaw citation and a Station: directive.
  *
- * Contract: specs/001-m1-smoke-test/contracts/lint_citations.md.
- * A valid citation has the form: Cowlishaw §<section>, p. <page>
- *   <section> = digits.digits or digits.digits.digits
- *   <page>    = one or more digits
- * Exit 0 if every koan contains at least one valid citation; exit 1 on any
- * missing citation or if no koan files exist.
+ * Contract: specs/002-m2-walking-skeleton/contracts/lint_citations.md.
+ * Citation:   Cowlishaw §<sec>, p. <page>     (anywhere in file)
+ *   <sec>     digits, optionally .digits one or more times
+ *   <page>    one or more digits
+ * Station:    line in the leading comment block matching `Station: <text>`
+ *   exactly one such line; <text> non-empty after stripping
+ *
+ * The path manifest (koans/path_to_enlightenment.rexx) is excluded — it is data, not a koan.
+ *
+ * Exit 0 if every koan passes both checks; exit 1 on any failure or empty koans/.
  */
 
 listing = '/tmp/lint_citations.'RANDOM(1, 99999)'.'TIME('S')'.list'
@@ -18,6 +22,7 @@ DO WHILE LINES(listing) > 0
   name = STRIP(LINEIN(listing))
   IF name = '' THEN ITERATE
   IF RIGHT(name, 5) \= '.rexx' THEN ITERATE
+  IF name = 'path_to_enlightenment.rexx' THEN ITERATE
   files.0 = files.0 + 1
   i = files.0
   files.i = 'koans/'name
@@ -26,38 +31,94 @@ CALL STREAM listing, 'C', 'CLOSE'
 ADDRESS SYSTEM 'rm -f' listing
 
 IF files.0 = 0 THEN DO
-  SAY '[lint] koans/ is empty (no koans to lint).'
+  SAY 'koans/ is empty -- nothing to lint'
   EXIT 1
 END
 
-failed = 0
+passed = 0
 DO i = 1 TO files.0
   path = files.i
-  found = 0
+
+  has_citation = 0
+  station_count = 0
+  in_leading_block = 1
+  lines_seen = 0
   DO WHILE LINES(path) > 0
     line = LINEIN(path)
-    IF check_citation(line) THEN DO
-      found = 1
-      LEAVE
+    lines_seen = lines_seen + 1
+
+    IF check_citation(line) THEN has_citation = 1
+
+    IF in_leading_block THEN DO
+      IF lines_seen > 50 THEN in_leading_block = 0
+      ELSE IF \is_comment_or_blank(line) THEN in_leading_block = 0
+      ELSE IF check_station(line) THEN station_count = station_count + 1
     END
   END
   CALL STREAM path, 'C', 'CLOSE'
 
-  IF found THEN
-    SAY '[lint]' path '... OK'
+  reasons. = ''
+  reasons.0 = 0
+  IF \has_citation THEN DO
+    reasons.0 = reasons.0 + 1
+    j = reasons.0
+    reasons.j = 'MISSING citation'
+  END
+  IF station_count = 0 THEN DO
+    reasons.0 = reasons.0 + 1
+    j = reasons.0
+    reasons.j = 'MISSING Station: directive'
+  END
+  ELSE IF station_count > 1 THEN DO
+    reasons.0 = reasons.0 + 1
+    j = reasons.0
+    reasons.j = 'MULTIPLE Station: directives'
+  END
+
+  IF reasons.0 = 0 THEN DO
+    SAY '[ ok ]' path
+    passed = passed + 1
+  END
   ELSE DO
-    SAY '[lint]' path '... MISSING'
-    failed = failed + 1
+    SAY '[FAIL]' path
+    DO j = 1 TO reasons.0
+      SAY '  'reasons.j
+    END
   END
 END
 
-IF failed = 0 THEN DO
-  SAY '[lint] All citations valid.'
-  EXIT 0
-END
+SAY ''
+SAY passed'/'files.0 'koans passed lint.'
 
-SAY '[lint]' failed 'of' files.0 'koan(s) failed citation check.'
+IF passed = files.0 THEN EXIT 0
 EXIT 1
+
+is_comment_or_blank: PROCEDURE
+  PARSE ARG line
+  s = STRIP(line)
+  IF s = '' THEN RETURN 1
+  IF LEFT(s, 2) = '/*' THEN RETURN 1
+  IF LEFT(s, 1) = '*' THEN RETURN 1
+  IF RIGHT(s, 2) = '*/' THEN RETURN 1
+  RETURN 0
+
+check_station: PROCEDURE
+  /* Leading-comment line strip rule: trim whitespace, then trim any
+   * leading run of '*' or '/' or whitespace, then check for "Station: ".
+   */
+  PARSE ARG line
+  s = STRIP(line)
+  IF s = '' THEN RETURN 0
+  /* Strip comment-prefix characters: leading *, / and spaces. */
+  DO WHILE s \= ''
+    c = LEFT(s, 1)
+    IF c = '*' | c = '/' | c = ' ' | c = '09'x THEN s = SUBSTR(s, 2)
+    ELSE LEAVE
+  END
+  IF POS('Station:', s) \= 1 THEN RETURN 0
+  rest = STRIP(SUBSTR(s, LENGTH('Station:') + 1))
+  IF rest = '' THEN RETURN 0
+  RETURN 1
 
 check_citation: PROCEDURE
   PARSE ARG line

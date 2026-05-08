@@ -1,0 +1,12 @@
+THE PATH OF REXX
+
+  [  ok  ] 00 about_asserts      The First Truths
+  [  ok  ] 01 about_strings      Of the Word Made String
+  [  ok  ] 02 about_variables    The Naming of Things
+  [  ok  ] 03 about_expressions  Of Operators and Their Powers
+  [  ok  ] 04 about_clauses      The Shape of an Instruction
+  [  ok  ] 05 about_say          The Pilgrim Speaks
+
+  Stations walked: 6 of 6.
+
+  The pilgrim has walked the foundation. The path opens further.

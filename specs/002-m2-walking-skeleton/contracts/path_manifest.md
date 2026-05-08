@@ -1,11 +1,17 @@
 # Contract: Path Manifest (`koans/path_to_enlightenment.rexx`)
 
-**Invocation**: `CALL 'koans/path_to_enlightenment.rexx'` from the runner.
+**Invocation**: Sourced by the runner via `LINEIN` + `INTERPRET`
+(Decision 5, research.md; `docs/DESIGN_DECISIONS_M2.md` ADR-007).
+Not invoked as a subprocess and not loaded via external `CALL` —
+external `CALL` does not share variable scope with the caller in
+Regina or ANSI X3.274 conformant REXX, so the manifest's stem
+assignments would not reach the runner that way.
 
 ## Behavior
 
-When `CALL`'d, this REXX file populates the `koans.` stem in the
-caller's variable scope (Decision 5, research.md), then `RETURN`s.
+When sourced, the file's clauses execute in the runner's own
+variable scope, populating the `koans.` stem and reaching the
+trailing `RETURN`.
 
 ## Variables populated
 
@@ -30,10 +36,14 @@ RETURN
 
 ## Constraints
 
-- MUST be `CALL`'d (shared-scope), not invoked as a subprocess. The
-  runner depends on the populated stem appearing in its own variables.
+- MUST be sourced via `LINEIN` + `INTERPRET` by the runner so the
+  populated stem appears in the runner's variable scope. MUST NOT be
+  invoked as a subprocess. External `CALL` is forbidden because it
+  does not share scope with the caller.
 - MUST NOT contain executable logic beyond stem assignments, comments,
-  and the trailing `RETURN`.
+  and the trailing `RETURN`. (The body is `INTERPRET`ed in the runner's
+  scope; anything more than data assignment risks polluting that
+  scope or aborting the runner on a syntax error.)
 - The order of `koans.1` ... `koans.koans.0` IS the curriculum order;
   it is the single source of truth for runner walk order.
 - Adding a koan: increment `koans.0` and append a new line. Removing

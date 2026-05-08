@@ -4,7 +4,7 @@
 
 ## Behavior
 
-1. `CALL`s `koans/path_to_enlightenment.rexx`, populating `koans.` stem (Decision 5, research.md).
+1. Sources `koans/path_to_enlightenment.rexx` via `LINEIN` + `INTERPRET`, populating the `koans.` stem in its own scope (Decision 5, research.md; `docs/DESIGN_DECISIONS_M2.md` ADR-007). External `CALL` is not used here because Regina (and ANSI REXX) gives external `CALL` targets their own variable scope.
 2. If `koans.0` is unset or zero: prints "The path is empty. No stations are defined." and exits 1.
 3. For `i = 1` to `koans.0`:
    - Verifies `koans.i` exists as a regular file. If not: prints "Station <seq> <topic> is missing from the path." and exits 1.

@@ -97,8 +97,12 @@ counter is passed to the dispatcher and surfaces in the diagnostic.
 
 ## Entity: Path Manifest (`koans/path_to_enlightenment.rexx`)
 
-A REXX source file that, when `CALL`'d by the runner, populates the
-`koans.` stem in the runner's variable space.
+A REXX source file containing only stem assignments and a trailing
+`RETURN`. Sourced by the runner via `LINEIN` + `INTERPRET` so the
+assignments execute in the runner's own scope and the populated
+`koans.` stem is directly accessible. (External `CALL` would NOT
+share scope in Regina or ANSI REXX; see
+`docs/DESIGN_DECISIONS_M2.md` ADR-007.)
 
 | Attribute | Type | Description |
 |---|---|---|
