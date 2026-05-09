@@ -6,7 +6,7 @@
  * the name is the value. This koan walks the three rules every REXX
  * variable obeys.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 
 n = 0
@@ -16,7 +16,7 @@ n = 0
  * the expression. After the assignment the symbol evaluates to that
  * value wherever it appears.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 greeting = 'namaste'
 n = n + 1; CALL m 'eq', 'namaste', greeting, n
@@ -30,7 +30,7 @@ n = n + 1; CALL m 'eq', 'namaste', greeting, n
  *
  * The pilgrim fills in the value the unbound symbol NEVER_SET takes.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'eq', FILL_ME_IN, NEVER_SET, n
 
@@ -41,7 +41,7 @@ n = n + 1; CALL m 'eq', FILL_ME_IN, NEVER_SET, n
  * 'namaste' while still being equal to itself when written as
  * GREETING.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'eq', 'namaste', GREETING, n
 

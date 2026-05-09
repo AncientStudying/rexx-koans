@@ -4,7 +4,7 @@
  *
  * Solution for koans/00_about_asserts.rexx.
  *
- * Cowlishaw §1.1, p. 1 -- Introduction
+ * Cowlishaw §1.1, p. 1
  */
 
 n = 0
@@ -16,7 +16,7 @@ n = 0
  * koan computes. They are compared as REXX strings, with numeric
  * coercion when both look like numbers.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments and equality
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'eq', '4', 2 + 2, n
 n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
@@ -26,7 +26,7 @@ n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
  * mirror of 'eq' and is useful when the koan teaches that two values
  * must be different.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments and equality
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
 
@@ -36,7 +36,7 @@ n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
  * string '1' on success. The second argument is unused for 'true' and
  * is conventionally the empty string.
  *
- * Cowlishaw §2.3, p. 25 -- Comparisons
+ * Cowlishaw §2.3, p. 26
  */
 n = n + 1; CALL m 'true', (1 = 1), '', n
 n = n + 1; CALL m 'true', (5 > 3), '', n
@@ -46,7 +46,7 @@ n = n + 1; CALL m 'true', (5 > 3), '', n
  * type code given. Common codes: W for whole number, N for any
  * number, A for alphanumeric.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments and equality
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'datatype', 5, 'W', n
 n = n + 1; CALL m 'datatype', 'pilgrim', 'A', n

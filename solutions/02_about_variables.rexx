@@ -4,7 +4,7 @@
  *
  * Solution for koans/02_about_variables.rexx.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 
 n = 0
@@ -14,7 +14,7 @@ n = 0
  * the expression. After the assignment the symbol evaluates to that
  * value wherever it appears.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 greeting = 'namaste'
 n = n + 1; CALL m 'eq', 'namaste', greeting, n
@@ -26,7 +26,7 @@ n = n + 1; CALL m 'eq', 'namaste', greeting, n
  * FILL_ME_IN mechanism works: until you replace it, FILL_ME_IN
  * evaluates to the literal string 'FILL_ME_IN'.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'eq', 'NEVER_SET', NEVER_SET, n
 
@@ -37,7 +37,7 @@ n = n + 1; CALL m 'eq', 'NEVER_SET', NEVER_SET, n
  * 'namaste' while still being equal to itself when written as
  * GREETING.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'eq', 'namaste', GREETING, n
 
