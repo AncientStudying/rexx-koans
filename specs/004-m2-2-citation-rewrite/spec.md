@@ -379,11 +379,18 @@ non-zero exit. Reverting the change would restore green lint.
   feature; it is M2.3's deliverable. M2.2 may modify the citation
   line itself (including its trailing heading text per FR-006) but
   MUST NOT modify other lines of the surrounding teaching block.
-- **FR-013**: The Stage I corpus is the only edit target. Files
-  outside `koans/00_about_asserts.rexx`–`koans/05_about_say.rexx`,
-  `solutions/00_about_asserts.rexx`–`solutions/05_about_say.rexx`,
-  `bin/lint_citations` (per FR-008), and the lint contract file
-  (per FR-008) MUST NOT be modified by this feature.
+- **FR-013**: The implementation phase of this feature MUST modify
+  only the following source-tree files: `koans/00_about_asserts.rexx`
+  through `koans/05_about_say.rexx`,
+  `solutions/00_about_asserts.rexx` through
+  `solutions/05_about_say.rexx`, and `bin/lint_citations` (per
+  FR-008). The M2.2 lint contract
+  (`specs/004-m2-2-citation-rewrite/contracts/lint_citations.md`) is
+  authored by `/speckit-plan` as part of feature design and is **not
+  further modified during implementation**; it is documented here for
+  completeness, not as an implementation edit target. No other
+  source-tree, fixture, or documentation file may be modified by
+  implementation tasks.
 - **FR-014** *(deferred — see User Story 5 and Clarifications session
   2026-05-09)*: The mechanical existence-check lint extension —
   `bin/lint_citations` parsing `docs/cowlishaw_index.md` and

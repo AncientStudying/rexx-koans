@@ -56,24 +56,33 @@ Then revert the sandbox edit; lint should return `[ ok ]`.
 
 ## Step 3 — Runner smoke walk + fixture diff
 
-Confirms `tests/fixtures/runner_stdout.txt` is unchanged.
+Confirms `tests/fixtures/runner_stdout.txt` is unchanged. The recipe
+below mirrors the `runner-smoke` step in
+`.github/workflows/verify.yml` exactly: build a shadow
+`koans-solved/` directory with every solution copied in as a koan,
+swap in a temporary path manifest, run the runner, restore the
+manifest, normalize CRLF, and diff.
 
 ```sh
-# Walk the path with all solutions in place; capture stdout.
-SOLUTIONS_AS_KOANS=1 regina lib/pilgrimage.rexx > /tmp/m22_runner.out 2>&1
-# Or equivalent — match whatever runner-smoke does in CI.
-
-diff /tmp/m22_runner.out tests/fixtures/runner_stdout.txt
+set -euo pipefail
+rm -rf koans-solved
+mkdir koans-solved
+cp solutions/*.rexx koans-solved/
+sed 's|koans/|koans-solved/|g' koans/path_to_enlightenment.rexx > koans-solved/path_to_enlightenment.rexx
+cp koans/path_to_enlightenment.rexx koans/path_to_enlightenment.rexx.bak
+cp koans-solved/path_to_enlightenment.rexx koans/path_to_enlightenment.rexx
+LC_ALL=C regina lib/pilgrimage.rexx > runner-out.txt
+mv koans/path_to_enlightenment.rexx.bak koans/path_to_enlightenment.rexx
+tr -d '\r' < runner-out.txt > runner-out.normalized
+diff -u tests/fixtures/runner_stdout.txt runner-out.normalized
 ```
 
 Expected: empty diff, exit code 0. M2.2 must not change runner
 output (FR-010); the diff is the canary.
 
-> If the runner-smoke job in CI invokes the runner with a different
-> harness (e.g., a wrapper script that redirects with a specific
-> `KOANS_DIR=`), use that exact invocation to keep parity with CI.
-> Inspect `.github/workflows/verify.yml` for the runner-smoke step's
-> command.
+If the recipe in `.github/workflows/verify.yml` ever drifts from this
+documented form, prefer the workflow as the source of truth and
+update this step accordingly.
 
 ## Step 4 — M2.2-specific spot check: audit-row coverage
 

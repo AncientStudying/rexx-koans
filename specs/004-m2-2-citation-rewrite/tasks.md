@@ -104,7 +104,7 @@ table). Catches corpus drift between plan and implementation.
   - `Cowlishaw §2.3, p. 25 -- Comparisons` → `Cowlishaw §2.3, p. 26`
   - `Cowlishaw §2.3, p. 27 -- Logical operators` → `Cowlishaw §2.3, p. 27 — Logical (Boolean)`
   - `Cowlishaw §2.3, p. 30 -- Concatenation` → `Cowlishaw §2.3, p. 25 — Concatenation`
-  Closes audit rows 4, 5 (koan-03 facet), 6, 7. Apply edits in the order listed to avoid pattern collision (the second rewrite's old string is a superstring of the first's; applying first→second order is safe because `Edit` matches exact strings, not prefixes).
+  Closes audit rows 4, 5 (koan-03 facet), 6, 7. Edit ordering is irrelevant: the five old strings are mutually non-overlapping (no old string is a substring of another — confirmed by the differing trailing labels and, for the §2.3 p. 22 pair, the case difference between `Operators` and `operators`).
 - [ ] T008 [P] [US2] Rewrite citations in `koans/04_about_clauses.rexx` and `solutions/04_about_clauses.rexx`. Apply each of the 3 distinct rewrites below to BOTH files using `Edit replace_all=true`:
   - `Cowlishaw §2.4, p. 38 -- Clauses` → `Cowlishaw §2.4, p. 31`
   - `Cowlishaw §2.4, p. 38 -- Continuation` → `Cowlishaw §2.2, p. 23`
@@ -130,8 +130,8 @@ table). Catches corpus drift between plan and implementation.
 ### Implementation for User Story 1
 
 - [ ] T013 [US1] PDF↔book offset spot check: confirm the +11 offset (book p. N = PDF p. N + 11) by opening the Internet Archive scan to PDF p. 30 and verifying it shows book p. 19 (which begins the "Literal strings" subsection). Record any offset discrepancy in the PR description.
-- [ ] T014 [US1] Pilgrim spot-check, audit-row set (11 citations): for each row in `docs/M2_FOLLOWUP.md` "Audit findings (2026-05-08)" walk the corresponding rewritten citation in the koan to its cited book page. Each MUST visibly cover the concept (e.g., turning to book p. 19 in §2.2 lands on "Literal strings"; book p. 70 in §2.7 lands on "SAY"). If any citation lands on the wrong material, halt and investigate before completing this phase.
-- [ ] T015 [US1] Pilgrim spot-check, non-audit set (3 citations): the citations not represented as audit rows are `Cowlishaw §2.3, p. 24` (koan 03 "Operators" general) and any other rewrites discovered during T002. Verify each by the same procedure. (Audit table covers most concepts; this catches anything author-added that the audit didn't enumerate.)
+- [ ] T014 [US1] Pilgrim spot-check, all 14 distinct rewrites: walk every rewritten citation in `research.md` §1 to its cited book page in its cited section. Each MUST visibly cover the concept the surrounding teaching block teaches (e.g., book p. 19 in §2.2 lands on "Literal strings"; book p. 70 in §2.7 lands on "SAY"; book p. 24 in §2.3 lands on the start of "Expressions and Operators"). The 14 rewrites collectively close all 11 audit rows; rows 4 (rewrites #7 + #8), 8 (#11 + #12), and 10 (#2 + #6) each correspond to two distinct rewrites — verify both. If any citation lands on the wrong material, halt and investigate before completing this phase.
+- [ ] T015 [US1] Post-rewrite drift check: run `grep -nE 'Cowlishaw §' koans/*.rexx solutions/*.rexx | grep -oE 'Cowlishaw §[^ ]+, p\. [0-9]+( — [^*]+)?' | sed 's| \*/||' | sort -u`. The unique citation strings emitted MUST be exactly the 14 canonical-form NEW strings listed in `research.md` §1 — no legacy `-- ` separator surviving, no unexpected string introduced by an accidental edit. If the unique-string set deviates, identify the rogue citation and reconcile (re-apply the missing edit, or revert the unintended change) before proceeding to Phase 5.
 
 **Checkpoint**: At this point, every rewritten citation has been visually confirmed against the source. US1 is delivered.
 
@@ -169,7 +169,11 @@ table). Catches corpus drift between plan and implementation.
 
 - [ ] T017 Edit `bin/lint_citations` to tighten the `check_citation` procedure (currently lines 123–142) per `research.md` §2 design and `specs/004-m2-2-citation-rewrite/contracts/lint_citations.md` Rule C1. The new procedure parses the prefix `Cowlishaw §<sec>, p. <page>` exactly as today, then inspects the tail: accept if the tail is empty (after stripping a single optional `*/` comment-close and trailing whitespace), or if the tail begins with the canonical separator ` — ` (one space + UTF-8 em-dash `'E2 80 94'X` + one space) followed by a non-empty heading (after stripping). Any other tail content MUST cause `check_citation` to return 0. No other procedure in `bin/lint_citations` is modified.
 - [ ] T018 Run `bin/lint_citations` on the rewritten corpus. Expected output: `6/6 koans passed lint.`, exit code 0. All 14 canonical-form citations pass the tightened regex.
-- [ ] T019 Negative spot-check: in a sandbox edit (do not commit), introduce a non-canonical citation into one koan (e.g., temporarily change a bare `Cowlishaw §2.5, p. 32` to legacy `Cowlishaw §2.5, p. 32 -- Anything`). Run `bin/lint_citations`. Expected: `[FAIL] koans/<file>` with `MISSING citation` reason and exit code 1. Revert the sandbox edit; re-run; expected `[ ok ]` again. Repeat for at least two more rejection cases from the contract's table (e.g., en-dash, missing-space-around-em-dash). Document the test outcomes in the PR description.
+- [ ] T019 Negative spot-check: in a sandbox edit (do NOT commit), exercise three distinct rejection cases against `bin/lint_citations` to confirm the tightened regex rejects each. For each case, temporarily change a bare canonical citation in any one koan to the malformed form, run `bin/lint_citations`, expect `[FAIL] koans/<file>` with `MISSING citation` reason and exit code 1, then revert and confirm `[ ok ]` returns. Required cases (matching `contracts/lint_citations.md` Rule C1 rejection table):
+  1. Legacy `--` separator: `Cowlishaw §2.5, p. 32 -- Anything`.
+  2. En-dash instead of em-dash: `Cowlishaw §2.5, p. 32 – Anything` (the separator is U+2013 `–`, not U+2014 `—`).
+  3. Empty heading after suffix: `Cowlishaw §2.5, p. 32 — ` (em-dash followed only by whitespace).
+  Document the three test outcomes in the PR description.
 
 **Checkpoint**: `bin/lint_citations` enforces the canonical form. The contract file (already in place from `/speckit-plan`) is the authoritative description; no contract edit is needed in this phase.
 
@@ -183,7 +187,7 @@ table). Catches corpus drift between plan and implementation.
 
 ### Implementation for User Story 4
 
-- [ ] T020 [US4] Local fixture diff: capture stdout from the runner with all solutions in place using whatever invocation `.github/workflows/verify.yml`'s `runner-smoke` step uses (inspect the workflow to confirm the exact command, e.g., `regina lib/pilgrimage.rexx` with `KOANS_DIR=solutions/` or equivalent). Diff against `tests/fixtures/runner_stdout.txt`. Expected: empty diff (modulo CRLF normalization). If non-empty, investigate before re-baselining — citations live in comments and should never affect runner output.
+- [ ] T020 [US4] Local fixture diff: reproduce the `runner-smoke` step from `.github/workflows/verify.yml`. The CI step builds a shadow `koans-solved/` directory containing every solution, swaps in a temporary path manifest pointing at it, runs `LC_ALL=C regina lib/pilgrimage.rexx`, normalizes CRLF, and diffs against `tests/fixtures/runner_stdout.txt`. The same recipe is documented step-by-step in `quickstart.md` Step 3. Expected: empty diff. If non-empty, investigate before re-baselining — citations live in comments and should never affect runner output.
 - [ ] T021 [US4] Push the feature branch to origin: `git push -u origin 004-m2-2-citation-rewrite`.
 - [ ] T022 [US4] Monitor CI: confirm the GitHub Actions verify workflow reports green on both `ubuntu-latest` and `macos-latest` for all three named jobs (`verify_solutions`, `lint_citations`, `runner-smoke`). The 6/6 count satisfies Constitution Principle IV and spec SC-005.
 
