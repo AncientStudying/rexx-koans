@@ -55,6 +55,42 @@ curriculum stage that adds new citations.
   vocabulary lists comfortably, and keeps M2.2's mechanical lookups
   unambiguous.
 
+### Plan-Time Empirical Corrections (2026-05-08)
+
+The following corrections were discovered during `/speckit-plan`
+Phase 0 by direct inspection of the source PDF with
+`pdftotext -layout`. They REPLACE the corresponding original
+Session 2026-05-08 wording where they conflict; the originals are
+preserved above for traceability. Authoritative details and
+rationale are in `research.md` §1 and §5.
+
+- **Book has one numbered tier, not two.** Cowlishaw's structure
+  is Part → numbered SECTION → named child heading. The audit's
+  `§X.Y` notation encodes (Part X, SECTION Y), e.g., `§2.2` =
+  Part 2, SECTION 2 (`STRUCTURE AND GENERAL SYNTAX`). Therefore
+  **FR-003 and FR-004 refer to the same level** (the §X.Y row);
+  treat them as a single requirement covering 22 numbered
+  SECTION rows (5 in Part 1, 17 in Part 2). FR-003's example
+  "SECTION 1: INTRODUCTION" is fictitious — replace with FR-004's
+  empirical examples (§2.2 "Structure and General Syntax", §2.5
+  "Assignments and Variables", and the like).
+- **Heading hierarchy refined.** FR-012a is updated from
+  `## / ### / ####` row tiers to `## / ###` row tiers with `#`
+  reserved for Part / Appendix navigation wrappers (which are
+  NOT rows):
+  - `# Cowlishaw Ground-Truth Index` — file title.
+  - `# Part 1 — Background`, `# Part 2 — REXX Language
+    Definition`, `# Appendices` — three navigation wrappers.
+  - `## §X.Y — TITLE` — one row per Cowlishaw SECTION.
+  - `## Appendix N: TITLE` — one row per appendix top-level entry.
+  - `### TITLE` — one row per named typographically distinct
+    child heading inside a §X.Y SECTION or appendix.
+- **Empirical row count.** Approximately 110–150 rows total: 5
+  Part-1 SECTIONs + 17 Part-2 SECTIONs + 4 appendices + ~80–120
+  child headings (concentrated in §2.7 KEYWORD INSTRUCTIONS
+  and §2.9 BUILT-IN FUNCTIONS, where each instruction or
+  function is its own child heading row).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Koan author looks up a citation while writing teaching prose (Priority: P1)
