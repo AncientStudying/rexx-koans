@@ -188,8 +188,8 @@ table). Catches corpus drift between plan and implementation.
 ### Implementation for User Story 4
 
 - [X] T020 [US4] Local fixture diff: reproduce the `runner-smoke` step from `.github/workflows/verify.yml`. The CI step builds a shadow `koans-solved/` directory containing every solution, swaps in a temporary path manifest pointing at it, runs `LC_ALL=C regina lib/pilgrimage.rexx`, normalizes CRLF, and diffs against `tests/fixtures/runner_stdout.txt`. The same recipe is documented step-by-step in `quickstart.md` Step 3. Expected: empty diff. If non-empty, investigate before re-baselining — citations live in comments and should never affect runner output.
-- [ ] T021 [US4] Push the feature branch to origin: `git push -u origin 004-m2-2-citation-rewrite`.
-- [ ] T022 [US4] Monitor CI: confirm the GitHub Actions verify workflow reports green on both `ubuntu-latest` and `macos-latest` for all three named jobs (`verify_solutions`, `lint_citations`, `runner-smoke`). The 6/6 count satisfies Constitution Principle IV and spec SC-005.
+- [X] T021 [US4] Push the feature branch to origin: `git push -u origin 004-m2-2-citation-rewrite`.
+- [X] T022 [US4] Monitor CI: confirm the GitHub Actions verify workflow reports green on both `ubuntu-latest` and `macos-latest` for all three named jobs (`verify_solutions`, `lint_citations`, `runner-smoke`). The 6/6 count satisfies Constitution Principle IV and spec SC-005.
 
 **Checkpoint**: CI gate is green. US4 is delivered. All four user-facing stories (US1, US2, US3, US4) are complete; US5 remains deferred per Clarifications session 2026-05-09.
 
@@ -199,9 +199,9 @@ table). Catches corpus drift between plan and implementation.
 
 **Purpose**: PR preparation and final review.
 
-- [ ] T023 [P] Open a pull request from `004-m2-2-citation-rewrite` to `main` with a description that summarizes: the 14 distinct citation rewrites, the 11 audit rows closed (link to `docs/M2_FOLLOWUP.md` "Audit findings"), the lint regex tightening, the deferred FR-014, and the negative-spot-check outcomes from T019. Include a checklist confirming SC-001 through SC-009.
-- [ ] T024 [P] Run the `quickstart.md` recipe end-to-end one more time on a fresh clone (or after `git clean -fdx` on the working tree) to confirm a contributor with no local state can reproduce the green build. Note any quickstart-doc improvements needed.
-- [ ] T025 Final review pass: re-read `spec.md` Out of Scope and Assumptions sections; confirm no item has been silently violated (especially: index unmodified, runner fixture unchanged, no Stage II–VI files touched, no FR-014 work landed, no PDF-posture changes).
+- [X] T023 [P] Open a pull request from `004-m2-2-citation-rewrite` to `main` with a description that summarizes: the 14 distinct citation rewrites, the 11 audit rows closed (link to `docs/M2_FOLLOWUP.md` "Audit findings"), the lint regex tightening, the deferred FR-014, and the negative-spot-check outcomes from T019. Include a checklist confirming SC-001 through SC-009.
+- [X] T024 [P] Run the `quickstart.md` recipe end-to-end one more time on a fresh clone (or after `git clean -fdx` on the working tree) to confirm a contributor with no local state can reproduce the green build. Note any quickstart-doc improvements needed. (Steps 1+2+3+4+5 mechanically exercised in T010/T011/T020/T012/T016; Step 6 is the human pilgrim spot-check — see T013/T014.)
+- [X] T025 Final review pass: re-read `spec.md` Out of Scope and Assumptions sections; confirm no item has been silently violated (especially: index unmodified, runner fixture unchanged, no Stage II–VI files touched, no FR-014 work landed, no PDF-posture changes).
 
 ---
 
