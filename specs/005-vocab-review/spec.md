@@ -108,6 +108,24 @@ US5 is the sole deferred element.
   unchanged. This avoids carrying koan 00's introductory
   scaffolding into every later koan while still closing the
   conflation defect everywhere it occurs.
+- Q: FR-004's byte-parity claim — accurate against the current
+  corpus? → A: No; relax to *per-substitution parity*. Discovered
+  during `/speckit-plan` Phase 0: koan and solution teaching
+  prose are intentionally divergent today (koans carry
+  pilgrim-facing instruction lines like *"The pilgrim fills in the
+  value the unbound symbol NEVER_SET takes"* that have no place in
+  solutions; solution file headers are terse "Solution for
+  `koans/NN_about_x.rexx`"; several Concept-block bodies are
+  worded differently for pedagogical reasons). Full byte-identical
+  teaching prose is pedagogically impossible and was never the
+  M2/M2.2 reality. The substantively-correct invariant for M2.3
+  is per-substitution parity: every vocabulary substitution
+  applied to a teaching block in `koans/NN_about_x.rexx` MUST be
+  applied identically to *every occurrence of the same
+  source-term* in `solutions/NN_about_x.rexx`. The surrounding
+  prose may continue to differ; only the substituted terms must
+  be uniformly canonical across the pair. FR-004 and SC-004 are
+  rewritten below to reflect this.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -365,12 +383,16 @@ diff the freshly captured runner stdout against
   follow-up against M2.2 (a one-row M2.2 patch) or against the
   index (a one-row M2.1 patch), depending on the root cause.
 - **Teaching prose drifts between a koan and its matching
-  solution.** Both files carry the same teaching prose by
-  construction (Constitution Principle I, solution-first work
-  order). The substitution is applied identically to both files
-  and verified by a per-pair diff. (Mirror of M2.2's FR-003
-  byte-parity invariant, applied to teaching prose rather than to
-  citation lines.)
+  solution.** Per the Clarifications session 2026-05-09
+  per-substitution-parity resolution, the two files share
+  vocabulary discipline but not surrounding prose: a vocabulary
+  substitution applied to a koan teaching block MUST be applied
+  identically to every occurrence of the same source-term in the
+  matching solution (and vice versa). The legitimate
+  pre-existing divergence between koan and solution prose
+  (pilgrim-instruction lines that belong only in koans; terser
+  solution file headers; intentionally divergent concept-block
+  bodies) is preserved.
 - **The runner fixture diverges unexpectedly.** Investigate before
   re-baselining. Teaching prose lives in koan comments and is
   never echoed; an observed change implies an edit that slipped
@@ -450,10 +472,16 @@ diff the freshly captured runner stdout against
      is restructured per FR-002.
 - **FR-004**: For every (koan, solution) pair where koan is
   `koans/NN_about_x.rexx` and solution is
-  `solutions/NN_about_x.rexx`, the teaching comment blocks (every
-  block of the form `/* Concept: ... */` and the file-header
-  block) MUST be byte-identical between the two files after this
-  feature lands.
+  `solutions/NN_about_x.rexx`, every vocabulary substitution
+  applied to a koan teaching block MUST be applied identically to
+  every occurrence of the same source-term in the solution
+  teaching prose, and vice versa. (Per the Clarifications session
+  2026-05-09 per-substitution-parity resolution: full
+  byte-identical teaching prose is pedagogically impossible
+  because koans carry pilgrim-instruction lines that solutions
+  cannot, and solution file headers are intentionally terse;
+  substantively-correct parity for M2.3 is term-by-term
+  consistency across the pair, not surrounding-prose identity.)
 - **FR-005**: Within a single file, every occurrence of a given
   non-Cowlishaw technical term MUST be substituted identically; no
   occurrence may be left in its old form when others are
@@ -551,8 +579,12 @@ diff the freshly captured runner stdout against
   PLAN.md §M2.3 are resolved (no item left in its pre-feature
   form anywhere in `koans/` or `solutions/`).
 - **SC-004**: For each of the six (koan, solution) pairs in
-  Stage I, the diff of teaching comment blocks between the two
-  files is empty (byte-identical sequences).
+  Stage I, every term in the post-feature substitution table
+  (per `specs/005-vocab-review/research.md` §2) appears in its
+  canonical Cowlishaw form on both sides of the pair wherever it
+  appears at all. (Per the Clarifications session 2026-05-09
+  per-substitution-parity resolution; surrounding prose may
+  continue to differ between koan and solution.)
 - **SC-005**: All six CI checks (`verify_solutions` × 2 OS,
   `lint_citations` × 2 OS, `runner-smoke` × 2 OS) are green on
   the feature branch's HEAD commit prior to merge.
