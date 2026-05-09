@@ -11,7 +11,7 @@
  * with the value the teaching block names. The runner will stop at
  * the first blank it finds; fill it, run again, and the path opens.
  *
- * Cowlishaw §1.1, p. 1 -- Introduction
+ * Cowlishaw §1.1, p. 1
  */
 
 n = 0
@@ -24,7 +24,7 @@ n = 0
  *
  * The expression  2 + 2  produces the string for the obvious sum.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments and equality
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'eq', FILL_ME_IN, 2 + 2, n
 n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
@@ -33,7 +33,7 @@ n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
  * The 'neq' kind passes when its two values do NOT match. Here the
  * koan asserts that two distinct names are unequal.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments and equality
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
 
@@ -42,7 +42,7 @@ n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
  * REXX boolean 1. Comparisons such as 1 = 1 and 5 > 3 produce the
  * string '1' on success. The second argument is unused for 'true'.
  *
- * Cowlishaw §2.3, p. 25 -- Comparisons
+ * Cowlishaw §2.3, p. 26
  */
 n = n + 1; CALL m 'true', (1 = 1), '', n
 n = n + 1; CALL m 'true', (5 > 3), '', n
@@ -53,7 +53,7 @@ n = n + 1; CALL m 'true', (5 > 3), '', n
  * number, A for alphanumeric. The pilgrim fills in the code that
  * declares 5 a whole number.
  *
- * Cowlishaw §2.5, p. 42 -- Assignments and equality
+ * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'datatype', 5, FILL_ME_IN, n
 n = n + 1; CALL m 'datatype', 'pilgrim', 'A', n

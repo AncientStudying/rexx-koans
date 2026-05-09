@@ -4,7 +4,7 @@
  *
  * Solution for koans/04_about_clauses.rexx.
  *
- * Cowlishaw §2.4, p. 38 -- Clauses
+ * Cowlishaw §2.4, p. 31
  */
 
 n = 0
@@ -14,7 +14,7 @@ n = 0
  * holds one clause, but a single line may carry several clauses by
  * separating them with semicolons.
  *
- * Cowlishaw §2.4, p. 38 -- Clauses
+ * Cowlishaw §2.4, p. 31
  */
 a = 1; b = 2
 n = n + 1; CALL m 'eq', 3, a + b, n
@@ -24,7 +24,7 @@ n = n + 1; CALL m 'eq', 3, a + b, n
  * line. The clause ends only when a non-comma, non-comment line
  * terminates it.
  *
- * Cowlishaw §2.4, p. 38 -- Continuation
+ * Cowlishaw §2.2, p. 23
  */
 total = ,
         10 + 20
@@ -37,7 +37,7 @@ n = n + 1; CALL m 'eq', 30, total, n
  * trailing comment beside the assignment below is invisible to the
  * interpreter.
  *
- * Cowlishaw §2.4, p. 39 -- Comments
+ * Cowlishaw §2.2, p. 18 — Comments
  */
 greeting = 'hello' /* a trailing comment */
 n = n + 1; CALL m 'eq', 'hello', greeting, n

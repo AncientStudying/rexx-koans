@@ -7,7 +7,7 @@
  * strings the interpreter recognises as numeric. To learn REXX is
  * first to learn the string.
  *
- * Cowlishaw §2.1, p. 15 -- Literal strings
+ * Cowlishaw §2.2, p. 19 — Literal strings
  */
 
 n = 0
@@ -16,7 +16,7 @@ n = 0
  * REXX has no separate character literal. 'pilgrim' and "pilgrim"
  * denote the same value -- they are equal under both = and ==.
  *
- * Cowlishaw §2.1, p. 15 -- Literal strings
+ * Cowlishaw §2.2, p. 19 — Literal strings
  */
 n = n + 1; CALL m 'eq', 'pilgrim', "pilgrim", n
 
@@ -25,7 +25,7 @@ n = n + 1; CALL m 'eq', 'pilgrim', "pilgrim", n
  * The empty string has length 0. The pilgrim fills in the length of
  * the literal 'koans:'.
  *
- * Cowlishaw §2.1, p. 15 -- Literal strings
+ * Cowlishaw §2.2, p. 19 — Literal strings
  */
 n = n + 1; CALL m 'eq', FILL_ME_IN, LENGTH('koans:'), n
 n = n + 1; CALL m 'eq', 0, LENGTH(''), n
@@ -36,7 +36,7 @@ n = n + 1; CALL m 'eq', 0, LENGTH(''), n
  * 'N' (number) accepts numeric strings. The pilgrim fills in the
  * type code that declares '42' a number.
  *
- * Cowlishaw §2.2, p. 17 -- Numbers
+ * Cowlishaw §2.3, p. 27 — Numbers
  */
 n = n + 1; CALL m 'datatype', '42', FILL_ME_IN, n
 n = n + 1; CALL m 'eq', '5', 2 + 3, n

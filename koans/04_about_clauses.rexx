@@ -6,7 +6,7 @@
  * what marks the boundary of one clause and how a clause may be
  * stretched across more than one line.
  *
- * Cowlishaw §2.4, p. 38 -- Clauses
+ * Cowlishaw §2.4, p. 31
  */
 
 n = 0
@@ -16,7 +16,7 @@ n = 0
  * clauses written on the same line. The pilgrim fills in the sum of
  * a and b after the semicolon-separated assignments.
  *
- * Cowlishaw §2.4, p. 38 -- Clauses
+ * Cowlishaw §2.4, p. 31
  */
 a = 1; b = 2
 n = n + 1; CALL m 'eq', FILL_ME_IN, a + b, n
@@ -26,7 +26,7 @@ n = n + 1; CALL m 'eq', FILL_ME_IN, a + b, n
  * line. The clause ends only when a non-comma, non-comment line
  * terminates it.
  *
- * Cowlishaw §2.4, p. 38 -- Continuation
+ * Cowlishaw §2.2, p. 23
  */
 total = ,
         10 + 20
@@ -39,7 +39,7 @@ n = n + 1; CALL m 'eq', 30, total, n
  * trailing comment beside the assignment below is invisible to the
  * interpreter.
  *
- * Cowlishaw §2.4, p. 39 -- Comments
+ * Cowlishaw §2.2, p. 18 — Comments
  */
 greeting = 'hello' /* a trailing comment */
 n = n + 1; CALL m 'eq', 'hello', greeting, n

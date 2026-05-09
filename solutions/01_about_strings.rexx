@@ -4,7 +4,7 @@
  *
  * Solution for koans/01_about_strings.rexx.
  *
- * Cowlishaw §2.1, p. 15 -- Literal strings
+ * Cowlishaw §2.2, p. 19 — Literal strings
  */
 
 n = 0
@@ -13,7 +13,7 @@ n = 0
  * REXX has no separate "character" type; every literal is a string.
  * 'pilgrim' and "pilgrim" denote the same value.
  *
- * Cowlishaw §2.1, p. 15 -- Literal strings
+ * Cowlishaw §2.2, p. 19 — Literal strings
  */
 n = n + 1; CALL m 'eq', 'pilgrim', "pilgrim", n
 
@@ -21,7 +21,7 @@ n = n + 1; CALL m 'eq', 'pilgrim', "pilgrim", n
  * The built-in LENGTH returns the number of characters in a string.
  * The empty string has length 0.
  *
- * Cowlishaw §2.1, p. 15 -- Literal strings
+ * Cowlishaw §2.2, p. 19 — Literal strings
  */
 n = n + 1; CALL m 'eq', 6, LENGTH('koans:'), n
 n = n + 1; CALL m 'eq', 0, LENGTH(''), n
@@ -32,7 +32,7 @@ n = n + 1; CALL m 'eq', 0, LENGTH(''), n
  * with code 'N' (number) accepts numeric strings; '42' and '3.14'
  * are numbers, 'pilgrim' is not.
  *
- * Cowlishaw §2.2, p. 17 -- Numbers
+ * Cowlishaw §2.3, p. 27 — Numbers
  */
 n = n + 1; CALL m 'datatype', '42', 'N', n
 n = n + 1; CALL m 'eq', '5', 2 + 3, n

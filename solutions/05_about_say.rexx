@@ -4,7 +4,7 @@
  *
  * Solution for koans/05_about_say.rexx.
  *
- * Cowlishaw §2.7, p. 56 -- The SAY instruction
+ * Cowlishaw §2.7, p. 70
  */
 
 n = 0
@@ -15,7 +15,7 @@ n = 0
  * a newline. The expression follows ordinary REXX rules; if you can
  * compute it into a variable, you can SAY it.
  *
- * Cowlishaw §2.7, p. 56 -- The SAY instruction
+ * Cowlishaw §2.7, p. 70
  */
 greeting = 'pilgrim'
 message = 'Hello,' greeting
@@ -27,7 +27,7 @@ n = n + 1; CALL m 'eq', 'Hello, pilgrim', message, n
  * exactly one blank between them. The same rule applies whether you
  * SAY the expression or assign it.
  *
- * Cowlishaw §2.7, p. 56 -- The SAY instruction
+ * Cowlishaw §2.7, p. 70
  */
 left = 'one'
 right = 'two'
@@ -38,7 +38,7 @@ n = n + 1; CALL m 'eq', 'one two', together, n
  * SAY with no expression is shorthand for SAY ''. The empty string
  * has length zero; SAY of it produces just the trailing newline.
  *
- * Cowlishaw §2.7, p. 56 -- The SAY instruction
+ * Cowlishaw §2.7, p. 70
  */
 empty = ''
 n = n + 1; CALL m 'eq', '', empty, n

@@ -1,10 +1,14 @@
 #!/usr/bin/env regina
 /* bin/lint_citations — verify each koan has a Cowlishaw citation and a Station: directive.
  *
- * Contract: specs/002-m2-walking-skeleton/contracts/lint_citations.md.
- * Citation:   Cowlishaw §<sec>, p. <page>     (anywhere in file)
+ * Contract: specs/004-m2-2-citation-rewrite/contracts/lint_citations.md.
+ * Citation:   Cowlishaw §<sec>, p. <page>                       (bare canonical form)
+ *       or:   Cowlishaw §<sec>, p. <page> — <heading>           (suffixed form)
  *   <sec>     digits, optionally .digits one or more times
  *   <page>    one or more digits
+ *   sep       in suffixed form, exactly: space + em-dash (U+2014, UTF-8 'E28094'x) + space
+ *   <heading> non-empty after stripping (suffixed form only)
+ *   tail      after <page> or <heading>, only whitespace and an optional comment-close are permitted
  * Station:    line in the leading comment block matching `Station: <text>`
  *   exactly one such line; <text> non-empty after stripping
  *
@@ -139,6 +143,19 @@ check_citation: PROCEDURE
     digits = digits + 1
   END
   IF digits = 0 THEN RETURN 0
+
+  /* FR-008 canonical-form tail check (Rule C1). */
+  trail = SUBSTR(line, page_start + digits)
+  trail = STRIP(trail, 'T')
+  IF RIGHT(trail, 2) = '*/' THEN
+    trail = STRIP(LEFT(trail, LENGTH(trail) - 2), 'T')
+
+  IF trail = '' THEN RETURN 1
+
+  emdash_sep = ' ' || 'E28094'x || ' '
+  IF LEFT(trail, LENGTH(emdash_sep)) \= emdash_sep THEN RETURN 0
+  heading = STRIP(SUBSTR(trail, LENGTH(emdash_sep) + 1))
+  IF heading = '' THEN RETURN 0
   RETURN 1
 
 is_section: PROCEDURE
