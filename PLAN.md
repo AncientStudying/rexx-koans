@@ -1,8 +1,17 @@
 # REXX Koans — Project Plan
 
-**Version:** 1.1  
+**Version:** 1.2  
 **Status:** Locked  
-**Locked on:** 2026-05-07
+**Locked on:** 2026-05-08
+
+*Changes since v1.1: Inserted three remediation sub-milestones
+M2.1–M2.3 between M2 and M3, in response to the M2 UAT audit
+(`docs/M2_FOLLOWUP.md`) which found that nine of eleven Cowlishaw
+citations in the Stage I koans had wrong page numbers and that some
+koan teaching prose used non-Cowlishaw vocabulary. M2.1 builds a
+whole-book structural index of *The REXX Language*; M2.2 rewrites the
+M2 citations against it; M2.3 reviews the koan vocabulary. No top-level
+milestone numbers were renumbered.*
 
 *Changes since v1.0: Inserted M1 (Smoke Test and Design Validation) ahead
 of the former M1 to pressure-test design assumptions in actual REXX
@@ -385,6 +394,121 @@ station-display module, `verify_solutions` and `lint_citations` scripts,
 GitHub Actions workflow, and Stage I koans (00–05) complete with matching
 solutions. End-to-end pilgrim experience verified on macOS and in CI.
 Built on the design decisions recorded in M1.
+
+**M2.1 — Cowlishaw Ground-Truth Index.** Build a whole-book structural
+index of *The REXX Language* (2nd edition) at `docs/cowlishaw_index.md`,
+extracted from the PDF in the gitignored `reference/` directory. From
+this point forward, the index is the authority for every citation and
+every piece of canonical REXX vocabulary in the curriculum.
+
+For every Section and every named subsection in Parts 1–2 and
+Appendices A–D, the index records:
+
+- The title verbatim as Cowlishaw writes it ("Literal strings", not
+  "string literals"; "Comparative", not "Comparisons").
+- The book page where the section or subsection begins.
+- A one-line factual summary in our own words, so a contributor or
+  reviewer does not need to re-open the PDF.
+- The canonical Cowlishaw vocabulary tied to the topic — the exact
+  terms the book uses (e.g., for §2.5: "variable", "symbol",
+  "compound symbol", "stem", "uninitialized").
+
+Build procedure, three internal passes:
+
+1. Extract the PDF with poppler's `pdftotext -layout` into a working
+   text dump. Parse `SECTION N: TITLE` headings and recognised
+   subsection headings programmatically into a Markdown skeleton with
+   one row per (section, subsection), summaries blank.
+2. Populate summaries and canonical vocabulary by reading the dumped
+   text page by page.
+3. UAT review by the project owner; commit on approval.
+
+Copyright posture: the index records *structure* only — titles, page
+numbers, our paraphrase, and key terminology. Cowlishaw's prose is not
+redistributed. Raw extracted text stays under `reference/`
+(gitignored) or in `/tmp`.
+
+Motivation: the M2 UAT audit (`docs/M2_FOLLOWUP.md`) found nine of
+eleven Cowlishaw citations in the Stage I koans had wrong page numbers
+because they were authored from training-data memory of REXX rather
+than from the actual book. The index removes that failure mode for
+every stage that follows.
+
+Prerequisite for M2.2 and M2.3.
+
+**M2.2 — Citation Rewrite Against the Index.** Replace every
+`Cowlishaw §N.N, p. NN` reference in the Stage I koans and matching
+solutions with a citation whose section and page match a row in
+`docs/cowlishaw_index.md`.
+
+Procedure:
+
+1. For each existing citation, identify the concept the teaching
+   block above it covers (literal strings, comments, semicolons,
+   arithmetic, comparison, logical, concatenation, assignment, SAY,
+   etc.).
+2. Look up the matching row in the index and apply the replacement
+   across koans and solutions (most distinct citations appear several
+   times each).
+3. Optionally extend `bin/lint_citations` to verify mechanically that
+   each citation references an existing index row, not just a
+   citation of the correct format. If extended, document the new
+   check in the lint contract.
+
+Acceptance:
+
+- Every citation in `koans/` and `solutions/` references an existing
+  row in the index.
+- `verify_solutions` and `lint_citations` are 6/6 green.
+- Runner stdout fixture is unchanged — citations live in koan
+  comments and are never echoed to stdout. The existing CI
+  fingerprint diff confirms.
+
+Motivation: the M2 UAT audit found nine of eleven cited (section,
+page) pairs wrong — often by ten or more pages, with several pointing
+at the wrong section entirely.
+
+Depends on M2.1.
+
+**M2.3 — Vocabulary Review Against the Index.** Walk every teaching
+comment block in the Stage I koans (and matching solutions, since
+teaching prose is shared) and substitute any technical term that does
+not match Cowlishaw's canonical vocabulary as recorded in
+`docs/cowlishaw_index.md`.
+
+The central tension to resolve in the prose is distinguishing
+*koan-framework vocabulary* from *REXX vocabulary*:
+
+- The framework verbs `eq`, `neq`, `true`, `datatype` defined in
+  `lib/meditation.rexx`, and the umbrella term "assertion", are
+  legitimately the framework's. They remain.
+- The REXX mechanisms those verbs exercise — the `=` and `==`
+  comparison operators, the boolean values 0 and 1, the DATATYPE
+  built-in — must use Cowlishaw's terms in the teaching prose.
+
+A teaching block frames the two layers explicitly so a reader sees
+both without conflation: *"the koan's assertion verb is `eq`; the
+REXX mechanism it exercises is the `=` comparison operator (Cowlishaw
+§..., p. ...)."*
+
+Specific candidates flagged at UAT:
+
+- "Literal string" (Cowlishaw) vs "string literal".
+- "Symbol" (Cowlishaw) vs "identifier" / "variable name".
+- "Comparative" (Cowlishaw subsection title) vs "Comparisons".
+- "Logical (Boolean)" (Cowlishaw subsection title).
+- The blanket "assertion" framing in `koans/00_about_asserts.rexx`
+  prose, which currently teaches the framework as if it were REXX.
+
+Acceptance:
+
+- Every technical term in koan teaching prose either appears
+  literally in the relevant index row's vocabulary column, or is
+  explicitly framed as koan-framework vocabulary distinct from REXX.
+- `verify_solutions` and `lint_citations` are 6/6 green.
+- Runner stdout fixture unchanged.
+
+May run in parallel with M2.2; both depend on M2.1.
 
 **M3 — The Path.** Stages II and III koans (06–17) with matching
 solutions. Scripture mechanic implemented and exercised by at least

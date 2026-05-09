@@ -1,0 +1,15 @@
+#!/bin/sh
+# bin/pilgrimage — locate regina and run the pilgrimage runner.
+# Contract: specs/002-m2-walking-skeleton/contracts/pilgrimage_launcher.md.
+set -eu
+
+if ! command -v regina >/dev/null 2>&1; then
+    printf 'pilgrimage: regina not found in PATH; install via "brew install regina-rexx" (macOS) or "sudo apt-get install -y regina-rexx" (Ubuntu)\n' >&2
+    exit 127
+fi
+
+launcher_dir=$(cd -- "$(dirname -- "$0")" && pwd)
+repo_root=$(cd -- "$launcher_dir/.." && pwd)
+cd "$repo_root"
+
+LC_ALL=C exec regina lib/pilgrimage.rexx "$@"

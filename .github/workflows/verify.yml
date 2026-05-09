@@ -35,3 +35,18 @@ jobs:
 
       - name: Lint citations
         run: regina bin/lint_citations
+
+      - name: Runner smoke (fully-solved walk against committed fingerprint)
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf koans-solved
+          mkdir koans-solved
+          cp solutions/*.rexx koans-solved/
+          sed 's|koans/|koans-solved/|g' koans/path_to_enlightenment.rexx > koans-solved/path_to_enlightenment.rexx
+          cp koans/path_to_enlightenment.rexx koans/path_to_enlightenment.rexx.bak
+          cp koans-solved/path_to_enlightenment.rexx koans/path_to_enlightenment.rexx
+          LC_ALL=C regina lib/pilgrimage.rexx > runner-out.txt
+          mv koans/path_to_enlightenment.rexx.bak koans/path_to_enlightenment.rexx
+          tr -d '\r' < runner-out.txt > runner-out.normalized
+          diff -u tests/fixtures/runner_stdout.txt runner-out.normalized

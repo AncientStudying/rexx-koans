@@ -1,8 +1,13 @@
 #!/usr/bin/env regina
-/* bin/verify_solutions — run every solution file and require all to pass.
+/* bin/verify_solutions -- run every file in solutions/ and require all to pass.
  *
- * Contract: specs/001-m1-smoke-test/contracts/verify_solutions.md.
- * Exit 0 if every solution exits 0; exit 1 on any failure or if no solutions exist.
+ * Contract: specs/002-m2-walking-skeleton/contracts/verify_solutions.md.
+ * Subprocess RC drives pass/fail. The four-kind dispatcher in
+ * lib/meditation.rexx is invoked transparently from each solution; this
+ * script does not interpret the dispatcher signature itself -- it only
+ * reads exit codes.
+ *
+ * Exit 0 if every solution exits 0; exit 1 on any failure or empty solutions/.
  */
 
 listing = '/tmp/verify_solutions.'RANDOM(1, 99999)'.'TIME('S')'.list'
@@ -21,34 +26,50 @@ CALL STREAM listing, 'C', 'CLOSE'
 ADDRESS SYSTEM 'rm -f' listing
 
 IF files.0 = 0 THEN DO
-  SAY '[verify] solutions/ is empty (no solutions to verify).'
+  SAY 'solutions/ is empty -- nothing to verify'
   EXIT 1
 END
 
-failed = 0
+/* Pairing audit: every koan must have a matching solution. */
+koan_listing = '/tmp/verify_solutions.'RANDOM(1, 99999)'.'TIME('S')'.klist'
+ADDRESS SYSTEM 'ls koans 2>/dev/null >' koan_listing
+missing_pair = 0
+DO WHILE LINES(koan_listing) > 0
+  name = STRIP(LINEIN(koan_listing))
+  IF name = '' THEN ITERATE
+  IF RIGHT(name, 5) \= '.rexx' THEN ITERATE
+  IF name = 'path_to_enlightenment.rexx' THEN ITERATE
+  IF STREAM('solutions/'name, 'C', 'QUERY EXISTS') = '' THEN DO
+    SAY '[FAIL] solutions/'name '-- MISSING (koans/'name 'has no matching solution)'
+    missing_pair = missing_pair + 1
+  END
+END
+CALL STREAM koan_listing, 'C', 'CLOSE'
+ADDRESS SYSTEM 'rm -f' koan_listing
+
+passed = 0
 DO i = 1 TO files.0
   path = files.i
   out = '/tmp/verify_solutions.'RANDOM(1, 99999)'.'TIME('S')'.out'
   ADDRESS SYSTEM 'regina' path '>' out '2>&1'
   rc_solution = RC
 
-  IF rc_solution = 0 THEN
-    SAY '[verify]' path '... PASS'
+  IF rc_solution = 0 THEN DO
+    SAY '[ ok ]' path
+    passed = passed + 1
+  END
   ELSE DO
-    SAY '[verify]' path '... FAIL'
+    SAY '[FAIL]' path
     DO WHILE LINES(out) > 0
-      SAY '[verify]  ' STRIP(LINEIN(out), 'T')
+      SAY '  ' STRIP(LINEIN(out), 'T')
     END
     CALL STREAM out, 'C', 'CLOSE'
-    failed = failed + 1
   END
   ADDRESS SYSTEM 'rm -f' out
 END
 
-IF failed = 0 THEN DO
-  SAY '[verify] All solutions pass.'
-  EXIT 0
-END
+SAY ''
+SAY passed'/'files.0 'solutions passed.'
 
-SAY '[verify]' failed 'of' files.0 'solution(s) failed.'
+IF passed = files.0 & missing_pair = 0 THEN EXIT 0
 EXIT 1
