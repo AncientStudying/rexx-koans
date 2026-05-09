@@ -33,6 +33,28 @@ The agreed remediation, recorded in `PLAN.md` (M2.1–M2.3) and
 M2.1 is a prerequisite for M2.2 and M2.3 and for every later
 curriculum stage that adds new citations.
 
+## Clarifications
+
+### Session 2026-05-08
+
+- Q: Should each named typographically distinct child heading inside a
+  §X.Y subsection (e.g., "Literal strings", "Comments", "Numbers",
+  "Comparative", "Logical (Boolean)", "Concatenation", "Implied
+  semicolons and continuations") get its own index row, or only the
+  numbered §X.Y subsections? → A: Each named child heading gets its
+  own row. Citation format remains `Cowlishaw §X.Y, p. NN — <child
+  heading>`, where the §X.Y is the parent subsection's number and the
+  page is the page on which the child heading begins.
+- Q: Which in-file layout should `docs/cowlishaw_index.md` use —
+  Markdown headings + bullet rows, a single Markdown table, one table
+  per top-level section, or a definition-list style? → A: Markdown
+  headings + bullet rows. Top-level section = `##`; numbered §X.Y
+  subsection = `###`; named child heading = `####`. Each heading is
+  followed by `Page:`, `Summary:`, and `Vocabulary:` as sub-bullets.
+  This gives GitHub anchor links per row, accommodates multi-term
+  vocabulary lists comfortably, and keeps M2.2's mechanical lookups
+  unambiguous.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Koan author looks up a citation while writing teaching prose (Priority: P1)
@@ -165,20 +187,22 @@ present in the appropriate row's vocabulary column.
 
 ### Edge Cases
 
-- **Subsection that does not begin on its own page-anchored heading
-  line.** Some Cowlishaw subsections may be visually distinguished
-  (indented bold) but share a page with another subsection. The index
-  still records each such subsection on its own row, with the book
-  page on which the subsection begins (which may be the same as a
-  preceding row's page).
+- **Multiple child headings on the same page.** A §X.Y subsection
+  may contain several named child headings (e.g., §2.3 has
+  "Arithmetic", "Comparative", "Concatenation", "Logical (Boolean)"
+  in close succession). Each gets its own row; rows may legitimately
+  share a book page when two child headings begin on the same page.
 - **Section that is a one-page taxonomy with no named subsections.**
   E.g., §2.4 "Clauses and Instructions" is a single page that lists
   clause categories. The row for §2.4 captures the section as a whole;
   no subsection rows are forced.
-- **Subsection titles that look like section titles but are not.**
-  Cowlishaw's typographic conventions are consistent but distinct;
-  the index must not promote a sub-subsection or list-item heading
-  to subsection rank.
+- **Heading-rank confusion.** Cowlishaw's typographic conventions
+  distinguish top-level sections, numbered §X.Y subsections, and
+  named child headings inside subsections. The index must record
+  each at its true rank — the parent section number on a row is
+  always the closest enclosing §X.Y, never an arbitrarily chosen
+  ancestor; and inline labels, list-item bold runs, and caption
+  text are not headings and do not get rows.
 - **Concept that appears across multiple sections.** E.g.,
   arithmetic precision is touched in §2.3 and elaborated in §2.11.
   Each section's row records the canonical vocabulary that section
@@ -206,14 +230,29 @@ present in the appropriate row's vocabulary column.
   (Introduction), Part 2 (Definition: Sections 2.1 through the end of
   the language definition), and Appendices A through D — not just the
   range needed for Stage I koans.
-- **FR-003**: For every numbered section (`SECTION N: TITLE` in
-  Cowlishaw's typography) in Parts 1 and 2, the index MUST contain a
-  row recording the section number, the section title verbatim as
-  written in the book, and the book page on which the section begins.
-- **FR-004**: For every named subsection that begins on its own
-  page-anchored heading line in Parts 1 and 2, the index MUST contain
-  a row recording the parent section number, the subsection title
-  verbatim, and the book page on which the subsection begins.
+- **FR-003**: For every top-level numbered section (`SECTION N: TITLE`
+  in Cowlishaw's typography — e.g., `SECTION 1: INTRODUCTION`,
+  `SECTION 2: REXX GENERAL CONCEPTS`) in Parts 1 and 2, the index
+  MUST contain a row recording the section number, the section title
+  verbatim as written in the book, and the book page on which the
+  section begins.
+- **FR-004**: For every numbered subsection (§X.Y — e.g., §2.2
+  "Structure and General Syntax", §2.5 "Assignments and Variables")
+  in Parts 1 and 2, the index MUST contain a row recording the §X.Y
+  identifier, the subsection title verbatim, and the book page on
+  which the subsection begins.
+- **FR-004a**: For every named, typographically distinct child
+  heading inside a numbered subsection (e.g., "Literal strings"
+  inside §2.2; "Comments" inside §2.2; "Numbers" inside §2.3;
+  "Comparative" inside §2.3; "Logical (Boolean)" inside §2.3;
+  "Concatenation" inside §2.3; "Implied semicolons and continuations"
+  inside §2.2; "Compound symbols" inside §2.5) in Parts 1 and 2, the
+  index MUST contain a row recording the parent §X.Y identifier, the
+  child heading verbatim, and the book page on which the child
+  heading begins. Citations against such a row use the format
+  `Cowlishaw §X.Y, p. NN — <child heading>`. Inline labels, list-item
+  headings, and figure or table captions MUST NOT be promoted to
+  child-heading rank.
 - **FR-005**: For each Appendix A through D, the index MUST contain
   a top-level row, plus rows for any named sub-headings inside the
   appendix that follow the same heading conventions as Parts 1–2
@@ -247,6 +286,20 @@ present in the appropriate row's vocabulary column.
 - **FR-012**: The index file MUST be a single Markdown file
   (`docs/cowlishaw_index.md`) and MUST be readable directly on
   GitHub's Markdown renderer and in a plain-text editor.
+- **FR-012a**: The index MUST use Markdown headings to encode row
+  hierarchy: top-level numbered section (e.g., `SECTION 1:
+  INTRODUCTION`) at heading level `##`; numbered §X.Y subsection
+  at heading level `###`; named child heading inside a subsection
+  at heading level `####`; appendix top-level entries (Appendix A,
+  B, C, D) at heading level `##`; named appendix sub-headings at
+  heading level `###`. Each heading represents exactly one index
+  row.
+- **FR-012b**: Under each heading, the row's content MUST appear as
+  three Markdown bullets, in this order: `- **Page:** <book page>`,
+  `- **Summary:** <one-line factual summary>`,
+  `- **Vocabulary:** <comma-separated canonical terms>`. No
+  additional fields. No prose paragraphs between heading and
+  bullets.
 - **FR-013**: The index file MUST be ordered by Cowlishaw's section
   numbering (Parts 1–2 in numeric section order, then Appendices A–D
   in alphabetical order). Rows within a section MUST be in the order
@@ -281,10 +334,13 @@ present in the appropriate row's vocabulary column.
 - **Index file** (`docs/cowlishaw_index.md`): single Markdown
   document. Authoritative reference for the project's citations and
   canonical REXX vocabulary. Anchored to the book, not the curriculum.
-- **Index row**: one line of the index representing either a top-level
-  section, a named subsection, or an appendix heading. Carries
+- **Index row**: one entry of the index representing either a
+  top-level section, a numbered §X.Y subsection, a named child
+  heading inside a subsection, or an appendix heading. Carries
   section/appendix identifier, verbatim title, book page, one-line
-  summary, and canonical vocabulary list.
+  summary, and canonical vocabulary list. Child-heading rows record
+  their parent §X.Y identifier (not a synthetic §X.Y.Z number, since
+  Cowlishaw does not number child headings).
 - **Source PDF**: M.F. Cowlishaw, *The REXX Language: A Practical
   Approach to Programming*, 2nd edition (1990). Lives at
   `reference/REXX Language - 2nd Edition.pdf` on contributor machines
@@ -302,8 +358,10 @@ present in the appropriate row's vocabulary column.
 - **SC-001**: The index covers 100% of `SECTION N: TITLE` headings in
   Parts 1 and 2 of the book, with verbatim title and correct book
   page for each.
-- **SC-002**: The index covers 100% of named subsections that begin on
-  their own page-anchored heading line in Parts 1 and 2 of the book.
+- **SC-002**: The index covers 100% of numbered §X.Y subsections in
+  Parts 1 and 2 and 100% of named typographically distinct child
+  headings inside those subsections, with verbatim title and correct
+  book page for each.
 - **SC-003**: All four appendices (A, B, C, D) are present, each with
   at least its top-level row.
 - **SC-004**: Every row has a non-empty one-line summary and a
