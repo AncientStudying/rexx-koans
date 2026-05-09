@@ -81,6 +81,34 @@ No other M2.2 items were deferred. M2.2's three P1 user stories
 (US1, US2, US3) shipped together; US4 (CI gate) shipped at merge.
 US5 is the sole deferred element.
 
+## Clarifications
+
+### Session 2026-05-09
+
+- Q: Scope discipline for the vocabulary walk — strict UAT-5 only,
+  comprehensive walk against every index vocab term, or middle
+  ground? → A: Comprehensive walk per FR-001. The 5 UAT-flagged
+  candidates in PLAN.md §M2.3 (and FR-003 here) are an illustrative
+  named subset, not the scope ceiling. Every technical term in
+  Stage I prose is checked against the relevant index row's
+  `Vocabulary:` column; FR-003 guarantees the 5 named items are
+  caught, while FR-001 governs everything else surfaced by the
+  walk (e.g., "blank concatenation" → Cowlishaw's "blank operator").
+- Q: Should the framework-vs-REXX labeling pattern from US3 apply
+  uniformly across koans 01–05, only to koan 00, or as a mid-ground?
+  → A: Establish-once + targeted re-label. The full
+  framework-vs-REXX layering pattern lands in `koans/00_about_asserts.rexx`
+  (per FR-002 and US3). In `koans/01_about_strings.rexx` through
+  `koans/05_about_say.rexx`, re-label only sentences that
+  specifically conflate framework and REXX constructs (e.g., koan
+  01's *"The 'datatype' kind with code 'N' (number) accepts
+  numeric strings"* becomes *"The `datatype` assertion verb with
+  DATATYPE type code 'N' accepts numeric strings"*); bare framework
+  verbs without a conflating REXX claim around them remain
+  unchanged. This avoids carrying koan 00's introductory
+  scaffolding into every later koan while still closing the
+  conflation defect everywhere it occurs.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Pilgrim reads canonical Cowlishaw vocabulary throughout Stage I (Priority: P1)
@@ -261,6 +289,14 @@ silently presented as both or as neither.
 4. **Given** any koan-framework term anywhere in koan 00's prose,
    **When** the term first appears, **Then** it is introduced
    explicitly as framework vocabulary.
+5. **Given** the koan 01 teaching block that names the `datatype`
+   verb alongside the type code `'N'` (currently *"The 'datatype'
+   kind with code 'N' (number) accepts numeric strings"*),
+   **When** the rewritten prose is read, **Then** per FR-002a the
+   framework verb (`datatype`) and the REXX DATATYPE built-in's
+   type code are named as two distinct things rather than
+   conflated; an analogous re-label is applied wherever else in
+   koans 01–05 a single sentence carries the same conflation.
 
 ---
 
@@ -376,8 +412,29 @@ diff the freshly captured runner stdout against
     using Cowlishaw's terms (per FR-001) and cited to the index.
   Where both layers appear in the same teaching block, the prose
   names them as two distinct things rather than as one.
+- **FR-002a**: In `koans/01_about_strings.rexx` through
+  `koans/05_about_say.rexx` (and matching solutions), per the
+  Clarifications session 2026-05-09 establish-once + targeted
+  re-label resolution, the framework-vs-REXX layering pattern is
+  applied selectively rather than uniformly: any teaching sentence
+  that *conflates* a framework construct with a REXX construct
+  (e.g., koan 01's *"The 'datatype' kind with code 'N' (number)
+  accepts numeric strings"* — mixing the framework `datatype`
+  verb with the REXX DATATYPE built-in's type code in one
+  ungrounded phrase) MUST be re-labeled to name the two layers
+  separately. Bare mentions of framework verbs that carry no
+  REXX claim around them (e.g., a sentence that names the verb
+  `eq` but does not also describe a REXX mechanism in the same
+  breath) remain unchanged. This avoids carrying koan 00's
+  introductory scaffolding into every later koan while still
+  closing the conflation defect everywhere it occurs.
 - **FR-003**: Each of the five UAT-flagged terminology candidates
-  recorded in PLAN.md §M2.3 MUST be addressed:
+  recorded in PLAN.md §M2.3 MUST be addressed. (Per the
+  Clarifications session 2026-05-09 comprehensive-scope
+  resolution, this list is a named subset of FR-001's general
+  scope, not its ceiling — additional substitutions surfaced by
+  the comprehensive walk are governed by FR-001 and are equally
+  in scope.) The five named items:
   1. "Literal string" (Cowlishaw) replaces "string literal" wherever
      the latter is used as the technical name for the construct.
   2. "Symbol" (Cowlishaw §2.5) is used in distinction from
