@@ -49,8 +49,8 @@ tooling required to run Pass 1, and create the gitignored working
 subdirectory for intermediate artifacts.
 
 - [ ] T001 [P] Confirm `reference/REXX Language - 2nd Edition.pdf` exists and `reference/` is gitignored (verify with `git check-ignore reference/`); the PDF MUST NOT enter the staging area at any point.
-- [ ] T002 [P] Confirm `pdftotext` (poppler) is installed and is ≥ v22 (`pdftotext -v`); record version in `reference/m2.1-build/NOTES.md` once it exists.
-- [ ] T003 Create gitignored working subdirectory `reference/m2.1-build/` for the layout dump, extraction script, and skeleton drafts. Create `reference/m2.1-build/NOTES.md` to capture pagination offset, extraction patterns, and UAT defect log.
+- [ ] T002 [P] Confirm `pdftotext` (poppler) is installed and is ≥ v22 (`pdftotext -v`).
+- [ ] T003 Create gitignored working subdirectory `reference/m2.1-build/` for the layout dump, extraction script, and skeleton drafts. Create `reference/m2.1-build/NOTES.md` to capture pagination offset, extraction patterns, and UAT defect log; record the `pdftotext -v` output observed in T002 as the file's first entry.
 
 ---
 

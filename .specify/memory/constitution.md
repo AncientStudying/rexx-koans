@@ -1,32 +1,47 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: unversioned (all placeholders) → 1.0.0 (first publication)
-Bump type: MAJOR — initial constitution establishment from blank template.
+Version change: 1.0.0 → 1.1.0
+Bump type: MINOR — material expansion of Principle III's citation
+form to permit an optional human-readable disambiguator suffix.
 
-Modified principles: N/A (first fill-in, no prior principles)
+Modified principles:
+  - Principle III (Every Koan Is Self-Teaching) — citation form
+    relaxed from "the exact form `Cowlishaw §N.N, p. NN`" to the
+    canonical form `Cowlishaw §N.N, p. NN`, optionally followed by
+    ` — <heading>` for child-heading disambiguation. Rationale:
+    M2.1 (specs/003-m2-1-cowlishaw-index) introduces a structural
+    index whose child-heading rows may share both a parent §X.Y and
+    a book page; the optional suffix disambiguates such rows in
+    citations. The bare canonical form remains valid and preferred
+    where it disambiguates on its own.
+  - Principle IV (CI Is the Acceptance Gate) — enumerated CI jobs
+    expanded from two (verify_solutions, lint_citations) to three
+    (verify_solutions, lint_citations, runner-smoke) to match the
+    actual matrix in `.github/workflows/verify.yml` (since M1.5).
+    No change to the underlying CI; the constitution text now
+    matches reality and the "6/6" check count cited elsewhere
+    (plan.md, tasks.md T039) is now constitution-grounded.
 
-Added sections:
-  - Core Principles (I–V)
-  - Tooling Constraints
-  - Milestone Discipline
-  - Governance
-
+Added sections: N/A
 Removed sections: N/A
 
 Template alignment:
-  ✅ .specify/templates/plan-template.md
-       — "Constitution Check" section generic prompt is correct; gates
-         should reference Principles I–IV when filling per feature.
-  ✅ .specify/templates/spec-template.md
-       — No mandatory sections required beyond existing template structure.
-  ✅ .specify/templates/tasks-template.md
-       — Generic language/path examples are appropriate stubs; individual
-         task files will use REXX/shell paths per PLAN.md §3 layout.
-  ✅ No commands/ directory exists — no command files to update.
-  ✅ PLAN.md — authoritative milestone reference; constitution defers to it.
+  ✅ .specify/templates/plan-template.md — no impact.
+  ✅ .specify/templates/spec-template.md — no impact.
+  ✅ .specify/templates/tasks-template.md — no impact.
+  ✅ specs/003-m2-1-cowlishaw-index/spec.md FR-004a — amended in
+       coordination with this principle change.
+  ✅ specs/003-m2-1-cowlishaw-index/contracts/index_format.md —
+       citation-format wording loosened to match this principle.
+  ⚠️ bin/lint_citations — current regex enforces the bare canonical
+       form; extension to accept the optional suffix is M2.2 work
+       per spec Out of Scope.
 
-Deferred items: None. All placeholders resolved.
+Deferred items: bin/lint_citations regex update (assigned to M2.2).
+
+Prior reports retained in git history; see commit 5f1d0c2 ancestry
+for the 1.0.0 (initial publication) report.
 -->
 
 # REXX Koans Constitution
@@ -68,7 +83,11 @@ Each koan test MUST be preceded by a teaching comment block containing:
 1. A short concept heading naming what the test reveals.
 2. Two to six sentences of prose sufficient for the pilgrim to make the
    test pass without consulting the book.
-3. A Cowlishaw citation in the exact form `Cowlishaw §N.N, p. NN`.
+3. A Cowlishaw citation in the canonical form `Cowlishaw §N.N, p. NN`,
+   optionally followed by the disambiguator suffix ` — <heading>` when
+   the citation refers to a child-heading row whose parent §N.N and
+   book page do not by themselves uniquely identify it. The bare
+   canonical form is preferred where it suffices.
 
 Citations MUST be verified against the contributor's local copy of
 *The REXX Language* (2nd edition, Cowlishaw, 1990) at writing time.
@@ -86,9 +105,15 @@ defined in `.github/workflows/verify.yml`:
 - **verify_solutions** (ubuntu-latest and macos-latest): All files in
   `solutions/` run green under the assertion machinery.
 - **lint_citations** (ubuntu-latest and macos-latest): Every koan in
-  `koans/` contains a well-formed `Cowlishaw §N.N, p. NN` citation.
+  `koans/` contains a well-formed citation in the canonical form
+  defined by Principle III.
+- **runner-smoke** (ubuntu-latest and macos-latest): A fully-solved
+  walk through `lib/pilgrimage.rexx` produces stdout that matches
+  `tests/fixtures/runner_stdout.txt` byte for byte (modulo CRLF
+  normalization).
 
-No merge proceeds with a failing CI run. Cross-platform parity between
+Six checks total — three named steps × two operating systems. No
+merge proceeds with a failing CI run. Cross-platform parity between
 the macOS Homebrew Regina and the Ubuntu apt Regina is a first-class
 requirement; divergence is a bug, not an acceptable variance.
 
@@ -165,4 +190,4 @@ Principles above. Complexity MUST be justified against Principle II.
 Runtime development guidance lives in `PLAN.md`. Design decisions
 from M1 and later are recorded in `docs/DESIGN_DECISIONS.md`.
 
-**Version**: 1.0.0 | **Ratified**: 2026-05-07 | **Last Amended**: 2026-05-07
+**Version**: 1.1.0 | **Ratified**: 2026-05-07 | **Last Amended**: 2026-05-09

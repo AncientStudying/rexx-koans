@@ -211,12 +211,17 @@ What should the file's heading hierarchy actually be?
 - `# Part 1 — Background` / `# Part 2 — REXX Language Definition`
   / `# Appendices` — three navigation wrappers, present for
   GitHub TOC and contributor scanning. **These are not rows.**
-- `## §X.Y — TITLE` — one row per Cowlishaw `SECTION N: TITLE`,
-  with the §X.Y identifier rendered prominently in the heading
-  for citation traceability. Spans Part 1 and Part 2.
-- `## Appendix N: TITLE` — one row per appendix top-level entry.
-- `### TITLE` — one row per named typographically distinct child
-  heading inside a §X.Y or appendix.
+- `## §X.Y — Title in Headline Case` — one row per Cowlishaw
+  `SECTION N: TITLE`, with the §X.Y identifier rendered prominently
+  in the heading for citation traceability and the title rendered
+  in headline case per FR-008 (e.g., `## §2.2 — Structure and
+  General Syntax`). Spans Part 1 and Part 2.
+- `## Appendix N: Title in Headline Case` — one row per appendix
+  top-level entry (e.g., `## Appendix A: REXX Syntax Diagrams`).
+- `### Cowlishaw's Verbatim Heading` — one row per named
+  typographically distinct child heading inside a §X.Y or appendix
+  (e.g., `### Literal strings`, `### Logical (Boolean)`); casing
+  preserved verbatim per FR-008.
 
 Each `##` and `###` heading is followed by exactly the three
 sub-bullets specified in FR-012b: `Page`, `Summary`, `Vocabulary`.

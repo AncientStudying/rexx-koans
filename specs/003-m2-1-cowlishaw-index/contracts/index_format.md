@@ -34,8 +34,11 @@ project.
 - **Page numbers**: book pages (the printed edition's pagination
   preserved in the scan), never PDF-viewer pages. PDF↔book
   offset: book p. N = PDF p. N+11.
-- **Citation format**: `Cowlishaw §X.Y, p. NN — <heading>`,
-  where §X.Y identifies (Part X, SECTION Y).
+- **Citation format**: canonical form `Cowlishaw §X.Y, p. NN`,
+  where §X.Y identifies (Part X, SECTION Y); for child-heading
+  rows the canonical form MAY be followed by an optional
+  disambiguator suffix ` — <child heading>` when needed (e.g.,
+  when two child rows share both a §X.Y and a book page).
 - **Layout**: see "Heading hierarchy" below.
 
 # Part 1 — Background
@@ -267,7 +270,9 @@ extended `bin/lint_citations` index check. Specifically:
 
 - **Stable**: heading hierarchy, bullet schema, bullet order,
   bullet labels, ordering of rows by section number, citation
-  format `Cowlishaw §X.Y, p. NN — <heading>`.
+  format — canonical form `Cowlishaw §X.Y, p. NN` with optional
+  disambiguator suffix ` — <child heading>` for child-heading
+  rows.
 - **Stable but expandable**: vocabulary list per row may grow
   if a Cowlishaw revision introduces new terms; the inclusion
   threshold from research.md §4 governs additions.

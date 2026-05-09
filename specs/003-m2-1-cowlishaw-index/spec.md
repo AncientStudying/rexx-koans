@@ -81,10 +81,16 @@ rationale are in `research.md` §1 and §5.
   - `# Cowlishaw Ground-Truth Index` — file title.
   - `# Part 1 — Background`, `# Part 2 — REXX Language
     Definition`, `# Appendices` — three navigation wrappers.
-  - `## §X.Y — TITLE` — one row per Cowlishaw SECTION.
-  - `## Appendix N: TITLE` — one row per appendix top-level entry.
-  - `### TITLE` — one row per named typographically distinct
-    child heading inside a §X.Y SECTION or appendix.
+  - `## §X.Y — Title in Headline Case` — one row per Cowlishaw
+    SECTION (e.g., `## §2.2 — Structure and General Syntax`).
+    Cowlishaw renders SECTION titles in ALL CAPS; the index
+    renders in headline case per FR-008.
+  - `## Appendix N: Title in Headline Case` — one row per appendix
+    top-level entry (e.g., `## Appendix A: REXX Syntax Diagrams`).
+  - `### Cowlishaw's Verbatim Heading` — one row per named
+    typographically distinct child heading inside a §X.Y SECTION
+    or appendix (e.g., `### Literal strings`, `### Logical
+    (Boolean)`); casing preserved verbatim per FR-008.
 - **Empirical row count.** Approximately 110–150 rows total: 5
   Part-1 SECTIONs + 17 Part-2 SECTIONs + 4 appendices + ~80–120
   child headings (concentrated in §2.7 KEYWORD INSTRUCTIONS
@@ -266,27 +272,40 @@ present in the appropriate row's vocabulary column.
   (Introduction), Part 2 (Definition: Sections 2.1 through the end of
   the language definition), and Appendices A through D — not just the
   range needed for Stage I koans.
-- **FR-003**: For every top-level numbered section (`SECTION N: TITLE`
-  in Cowlishaw's typography — e.g., `SECTION 1: INTRODUCTION`,
-  `SECTION 2: REXX GENERAL CONCEPTS`) in Parts 1 and 2, the index
-  MUST contain a row recording the section number, the section title
-  verbatim as written in the book, and the book page on which the
-  section begins.
-- **FR-004**: For every numbered subsection (§X.Y — e.g., §2.2
+- **FR-003**: For every numbered SECTION (§X.Y, where X is the Part
+  number and Y is the within-Part SECTION number — e.g., §2.2
   "Structure and General Syntax", §2.5 "Assignments and Variables")
   in Parts 1 and 2, the index MUST contain a row recording the §X.Y
-  identifier, the subsection title verbatim, and the book page on
-  which the subsection begins.
+  identifier, the SECTION title (subject to the casing rule in
+  FR-008), and the book page on which the SECTION begins. Cowlishaw's
+  numbered structure has exactly one tier — the §X.Y SECTION — not
+  two; there is no separate `SECTION N: TITLE` outer tier above the
+  §X.Y level. The audit-era citation format `Cowlishaw §N.N, p. NN`
+  maps directly onto this tier.
+- **FR-004**: [Merged into FR-003.] The original FR-004 wording
+  treated `SECTION N: TITLE` and §X.Y as separate tiers; Phase 0 PDF
+  inspection (research.md §1) confirmed they are the same tier. See
+  the Plan-Time Empirical Corrections block above for the rationale.
+  Existing references to FR-004 in plan.md, tasks.md, data-model.md,
+  and contracts/index_format.md should be read as references to
+  FR-003.
 - **FR-004a**: For every named, typographically distinct child
-  heading inside a numbered subsection (e.g., "Literal strings"
-  inside §2.2; "Comments" inside §2.2; "Numbers" inside §2.3;
-  "Comparative" inside §2.3; "Logical (Boolean)" inside §2.3;
-  "Concatenation" inside §2.3; "Implied semicolons and continuations"
-  inside §2.2; "Compound symbols" inside §2.5) in Parts 1 and 2, the
-  index MUST contain a row recording the parent §X.Y identifier, the
-  child heading verbatim, and the book page on which the child
-  heading begins. Citations against such a row use the format
-  `Cowlishaw §X.Y, p. NN — <child heading>`. Inline labels, list-item
+  heading inside a numbered SECTION (e.g., "Literal strings" inside
+  §2.2; "Comments" inside §2.2; "Numbers", "Comparative", "Logical
+  (Boolean)", "Concatenation" inside §2.3; "Implied semicolons and
+  continuations" inside §2.2; "Compound symbols" inside §2.5) in
+  Parts 1 and 2, the index MUST contain a row recording the parent
+  §X.Y identifier, the child heading verbatim, and the book page on
+  which the child heading begins. Citations against such a row begin
+  with the constitution-mandated canonical form
+  `Cowlishaw §X.Y, p. NN` (Constitution Principle III) and MAY append
+  the disambiguator suffix ` — <child heading>` when the parent §X.Y
+  contains multiple child rows whose pages do not by themselves
+  distinguish the citation (e.g., two child headings beginning on
+  the same book page, per the Edge Cases § "Multiple child headings
+  on the same page"). The disambiguator suffix is a human-readable
+  trailer for reader clarity; the canonical citation is the
+  unsuffixed `Cowlishaw §X.Y, p. NN`. Inline labels, list-item
   headings, and figure or table captions MUST NOT be promoted to
   child-heading rank.
 - **FR-005**: For each Appendix A through D, the index MUST contain
@@ -303,10 +322,18 @@ present in the appropriate row's vocabulary column.
   (e.g., for §2.5: "variable", "symbol", "compound symbol", "stem",
   "uninitialized"). Each listed term MUST appear verbatim in
   Cowlishaw's text within or near the cited section.
-- **FR-008**: Section and subsection titles in the index MUST match
-  Cowlishaw's wording exactly (case-sensitive, including parenthetical
-  forms — e.g., "Literal strings", "Comparative", "Logical (Boolean)",
-  not paraphrases).
+- **FR-008**: Heading text in the index MUST match Cowlishaw's
+  wording (no paraphrases — e.g., "Literal strings", "Comparative",
+  "Logical (Boolean)"). Punctuation (parentheses, hyphens,
+  ampersands, slashes) is preserved verbatim at every rank. Casing
+  rules differ by rank: child-heading rows (`###`) preserve
+  Cowlishaw's casing verbatim. SECTION rows (`##`) and Appendix
+  top-level rows (`##`) render titles in headline case for
+  readability — Cowlishaw typesets these in ALL CAPS (e.g.,
+  `STRUCTURE AND GENERAL SYNTAX`); the index renders them as
+  `Structure and General Syntax`. This headline-case rendering at
+  the `##` rank is the one permitted typographic adjustment and is
+  documented in contracts/index_format.md §"§X.Y SECTION rendering".
 - **FR-009**: All page numbers in the index MUST be **book pages**
   (the printed edition's page numbers as preserved in the Internet
   Archive scan), not PDF-viewer page numbers. The index MUST be
@@ -323,13 +350,17 @@ present in the appropriate row's vocabulary column.
   (`docs/cowlishaw_index.md`) and MUST be readable directly on
   GitHub's Markdown renderer and in a plain-text editor.
 - **FR-012a**: The index MUST use Markdown headings to encode row
-  hierarchy: top-level numbered section (e.g., `SECTION 1:
-  INTRODUCTION`) at heading level `##`; numbered §X.Y subsection
-  at heading level `###`; named child heading inside a subsection
-  at heading level `####`; appendix top-level entries (Appendix A,
-  B, C, D) at heading level `##`; named appendix sub-headings at
-  heading level `###`. Each heading represents exactly one index
-  row.
+  hierarchy. `#` is reserved for the file title (one occurrence) and
+  for the three Part / Appendix navigation wrappers
+  (`# Part 1 — Background`, `# Part 2 — REXX Language Definition`,
+  `# Appendices`) — these four `#` headings are NOT rows and carry
+  no Page / Summary / Vocabulary bullets. `##` is used for every
+  §X.Y SECTION row (Parts 1 + 2 = 22 total) and for every Appendix
+  top-level entry (A, B, C, D = 4 total). `###` is used for every
+  named typographically distinct child heading inside a §X.Y SECTION
+  or inside an appendix. No row uses `####` or deeper. Each `##` and
+  `###` heading represents exactly one index row. The canonical
+  layout is fixed by contracts/index_format.md §"Heading hierarchy".
 - **FR-012b**: Under each heading, the row's content MUST appear as
   three Markdown bullets, in this order: `- **Page:** <book page>`,
   `- **Summary:** <one-line factual summary>`,
@@ -344,8 +375,10 @@ present in the appropriate row's vocabulary column.
   internal passes recorded in `PLAN.md` §M2.1 — (1) programmatic
   skeleton extracted from the PDF; (2) summaries and canonical
   vocabulary populated from page-by-page reading; (3) UAT review by
-  the project owner — and MUST NOT be committed until the UAT pass
-  is complete.
+  the project owner — and MUST NOT be merged to `main` until the
+  UAT pass is complete. Intermediate commits to the feature branch
+  during Passes 1 and 2 are normal git workflow and not constrained
+  by this requirement.
 - **FR-015**: The index, once committed, MUST be the authority that
   M2.2 (citation rewrite) and M2.3 (vocabulary review) cite against.
   Both downstream features look up rows in this file; neither
