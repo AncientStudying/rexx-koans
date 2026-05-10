@@ -18,8 +18,8 @@ n = 0
  *
  * Cowlishaw §2.3, p. 25 — Arithmetic
  */
-n = n + 1; CALL m 'eq', FILL_ME_IN, 3 + 4, n
-n = n + 1; CALL m 'eq', 6, 12 / 2, n
+CALL m 'eq', FILL_ME_IN, 3 + 4
+CALL m 'eq', 6, 12 / 2
 
 /* Concept: comparative operators.
  * The = operator performs a normal comparison: '5' = 5.0 is true
@@ -30,8 +30,8 @@ n = n + 1; CALL m 'eq', 6, 12 / 2, n
  *
  * Cowlishaw §2.3, p. 26
  */
-n = n + 1; CALL m 'true', ('5' = 5.0), '', n
-n = n + 1; CALL m 'true', ('5' \== 5.0), '', n
+CALL m 'true', ('5' = 5.0), ''
+CALL m 'true', ('5' \== 5.0), ''
 
 /* Concept: logical operators.
  * & is And, | is Inclusive or, \ is Logical not. The Logical
@@ -40,8 +40,8 @@ n = n + 1; CALL m 'true', ('5' \== 5.0), '', n
  *
  * Cowlishaw §2.3, p. 27 — Logical (Boolean)
  */
-n = n + 1; CALL m 'true', (1 & 1), '', n
-n = n + 1; CALL m 'true', (0 | 1), '', n
+CALL m 'true', (1 & 1), ''
+CALL m 'true', (0 | 1), ''
 
 /* Concept: concatenation.
  * Two terms written next to each other with no operator between
@@ -56,12 +56,13 @@ n = n + 1; CALL m 'true', (0 | 1), '', n
  */
 left = 'na'
 right = 'maste'
-n = n + 1; CALL m 'eq', FILL_ME_IN, left||right, n
-n = n + 1; CALL m 'eq', 'na maste', left right, n
+CALL m 'eq', FILL_ME_IN, left||right
+CALL m 'eq', 'na maste', left right
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/03_about_expressions.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/03_about_expressions.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN

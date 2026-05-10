@@ -17,7 +17,7 @@ n = 0
  * Cowlishaw §2.5, p. 32
  */
 greeting = 'namaste'
-n = n + 1; CALL m 'eq', 'namaste', greeting, n
+CALL m 'eq', 'namaste', greeting
 
 /* Concept: uninitialized variables.
  * A simple symbol that has never been assigned evaluates to its own
@@ -28,7 +28,7 @@ n = n + 1; CALL m 'eq', 'namaste', greeting, n
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'eq', 'NEVER_SET', NEVER_SET, n
+CALL m 'eq', 'NEVER_SET', NEVER_SET
 
 /* Concept: case folding of symbols.
  * REXX simple symbols are case-insensitive. Whether you write
@@ -39,11 +39,12 @@ n = n + 1; CALL m 'eq', 'NEVER_SET', NEVER_SET, n
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'eq', 'namaste', GREETING, n
+CALL m 'eq', 'namaste', GREETING
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'solutions/02_about_variables.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'solutions/02_about_variables.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN

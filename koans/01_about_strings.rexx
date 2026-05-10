@@ -18,7 +18,7 @@ n = 0
  *
  * Cowlishaw §2.2, p. 19 — Literal strings
  */
-n = n + 1; CALL m 'eq', 'pilgrim', "pilgrim", n
+CALL m 'eq', 'pilgrim', "pilgrim"
 
 /* Concept: LENGTH counts characters.
  * The built-in LENGTH returns the number of characters in a string.
@@ -27,8 +27,8 @@ n = n + 1; CALL m 'eq', 'pilgrim', "pilgrim", n
  *
  * Cowlishaw §2.2, p. 19 — Literal strings
  */
-n = n + 1; CALL m 'eq', FILL_ME_IN, LENGTH('koans:'), n
-n = n + 1; CALL m 'eq', 0, LENGTH(''), n
+CALL m 'eq', FILL_ME_IN, LENGTH('koans:')
+CALL m 'eq', 0, LENGTH('')
 
 /* Concept: numbers are strings.
  * Everything in REXX is a string. A number is a string the
@@ -40,12 +40,13 @@ n = n + 1; CALL m 'eq', 0, LENGTH(''), n
  *
  * Cowlishaw §2.3, p. 27 — Numbers
  */
-n = n + 1; CALL m 'datatype', '42', FILL_ME_IN, n
-n = n + 1; CALL m 'eq', '5', 2 + 3, n
+CALL m 'datatype', '42', FILL_ME_IN
+CALL m 'eq', '5', 2 + 3
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/01_about_strings.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/01_about_strings.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN

@@ -1,8 +1,18 @@
 # REXX Koans — Project Plan
 
-**Version:** 1.3  
+**Version:** 1.4  
 **Status:** Locked  
-**Locked on:** 2026-05-09
+**Locked on:** 2026-05-10
+
+*Changes since v1.3: Inserted M2.5 (Koan Assertion-Line Shape
+Cleanup) between M2.4 and M3 to remove per-line framework
+bookkeeping (`n = n + 1; ... , n`) from every assertion line in
+`koans/` and `solutions/`, hoisting the assertion-ordinal counter
+into the koan-local `m:` wrapper so each test line shows only the
+REXX being taught. Also added a §8 style bullet codifying the new
+shape as a forward requirement: M3+ koans must use it from
+inception. `lib/meditation.rexx`'s external interface is unchanged.
+No top-level milestone numbers were renumbered.*
 
 *Changes since v1.2: Inserted M2.4 (Mechanical Citation Existence
 Check) between M2.3 and M3 to implement the lint extension deferred
@@ -269,6 +279,16 @@ These guidelines govern koan prose, comments, and runner output:
      does not contain the PDF, and CI does not verify page numbers
      against it; CI only verifies that each koan contains a citation
      of the correct form (see `bin/lint_citations` in §10).
+- **Assertion lines stay single-statement.** Each test is one
+  `CALL m 'verb', expected, actual` line — no inline ordinal counter,
+  no per-line framework bookkeeping. The koan-local `m:` wrapper at
+  the foot of every koan increments the assertion ordinal `n`
+  internally and forwards it to `lib/meditation.rexx`; a single
+  `n = 0` initializer at the top of the koan is the only counter
+  surface the pilgrim sees. The pattern `n = n + 1; CALL m '...', ..., n`
+  is forbidden in new koans and solutions from M2.5 onward. Rationale:
+  the pilgrim's eye should land on the REXX being taught, not on
+  framework state.
 - **Restraint with humor.** A dry note lands; a sustained joke wears thin
   across thirty koans.
 
@@ -571,6 +591,96 @@ canonical-form check is the foundation the join sits on top of).
 May run in parallel with M2.3 — they edit disjoint surfaces (the
 lint script vs koan teaching prose) and each only depends on
 M2.1 + M2.2.
+
+**M2.5 — Koan Assertion-Line Shape Cleanup.** Restructure every
+koan and matching solution so that each assertion line shows only
+the REXX being taught, with framework bookkeeping moved into the
+koan-local `m:` wrapper. The current shape inlines an assertion
+ordinal counter on every line —
+
+```rexx
+n = n + 1; CALL m 'eq', 4, 2 + 2, n
+```
+
+— forcing the pilgrim to parse framework state on the same line as
+the REXX they were meant to focus on. The new shape drops the prefix
+and the trailing ordinal argument:
+
+```rexx
+CALL m 'eq', 4, 2 + 2
+```
+
+The koan-local `m:` wrapper takes over ordinal tracking. Because
+the wrapper is a label-based subroutine without `PROCEDURE`, it
+shares the caller's variable pool and can read and increment `n`
+directly. The single `n = 0` initializer at the top of each koan
+remains, and is now the only counter surface visible above the
+fold.
+
+Procedure:
+
+1. In each `koans/NN_about_*.rexx` and `solutions/NN_about_*.rexx`
+   file (Stage I, 00–05 in both trees), drop the `n = n + 1;`
+   prefix and the trailing `, n` argument from every assertion
+   line. Leave the `n = 0` initializer at the top.
+2. Update each koan-local `m:` wrapper to take three positional
+   arguments and increment `n` itself before delegating:
+   ```rexx
+   m: PARSE ARG kind, arg1, arg2
+      n = n + 1
+      CALL 'lib/meditation.rexx' kind, arg1, arg2, '<koan_path>', n, SIGL
+      IF RESULT \= 0 THEN EXIT RESULT
+      RETURN
+   ```
+   `SIGL` continues to resolve to the koan's `CALL m` line because
+   label-based CALLs set `SIGL` at the call site; the in-wrapper
+   increment does not perturb it.
+3. `lib/meditation.rexx` is unchanged — its external interface
+   still receives `n` and `line` as the 5th and 6th arguments; the
+   only difference is that `n` now originates inside the wrapper
+   rather than on the caller's line.
+4. Run `bin/pilgrimage` end-to-end against the curriculum in both
+   the unsolved (FILL_ME_IN) state and the fully-filled state, and
+   confirm the runner output is identical to the pre-change
+   fixture (assertion ordinals in failure messages and the
+   "Damaged at: ..., line N" line numbers must match).
+5. Re-run `bin/verify_solutions` and `bin/lint_citations`; both
+   must remain 6/6 green.
+
+Acceptance:
+
+- No occurrence of the pattern `n = n + 1;` followed by `CALL m`
+  remains in `koans/` or `solutions/`.
+- No assertion line in `koans/` or `solutions/` passes `n` as a
+  trailing argument to `CALL m`.
+- Every koan-local `m:` wrapper takes three arguments
+  (`kind, arg1, arg2`) and increments `n` internally.
+- `verify_solutions` and `lint_citations` are 6/6 green.
+- `bin/pilgrimage` runner stdout fixture is byte-identical to the
+  pre-change run on a representative success path and a
+  representative failure path.
+
+Forward requirement: from M3 onward, all newly authored koans and
+solutions use the cleaned shape from inception. Reintroducing the
+per-line ordinal pattern is a review-blocker. The §8 style
+guideline records this rule.
+
+Motivation: the per-line ordinal counter is pure framework
+bookkeeping with no pedagogical value — the pilgrim has long since
+learned assignment and addition by the time they see it for the
+fiftieth time, and it competes for attention with the REXX
+actually being taught (`2 + 2`, `(1 = 1)`, `'pilgrim'`). Hoisting
+it into the wrapper removes the noise without changing the
+framework's external behavior. The ordinal becomes a runtime fact
+surfaced in failure messages rather than a source-code fact the
+pilgrim must read past on every line — which is closer to how it
+is actually used.
+
+Independent of M2.1–M2.4 in semantics, but edits the same files as
+M2.2 and M2.3. Schedule after M2.2, M2.3, and M2.4 are merged to
+avoid rework on overlapping surfaces. Should land before M3 begins
+so the new shape is the only shape that M3+ koans are authored
+into.
 
 **M3 — The Path.** Stages II and III koans (06–17) with matching
 solutions. Scripture mechanic implemented and exercised by at least
