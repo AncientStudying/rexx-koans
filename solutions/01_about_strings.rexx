@@ -28,9 +28,11 @@ n = n + 1; CALL m 'eq', 0, LENGTH(''), n
 
 /* Concept: numbers are strings.
  * Everything in REXX is a string. A number is a string of digits the
- * interpreter happens to recognize as numeric. The 'datatype' kind
- * with code 'N' (number) accepts numeric strings; '42' and '3.14'
- * are numbers, 'pilgrim' is not.
+ * interpreter happens to recognize as numeric. The framework's
+ * `datatype` assertion verb passes when DATATYPE (the REXX
+ * built-in, Cowlishaw §2.9, p. 91) returns true for the named type
+ * — code 'N' (Number) accepts numeric strings; '42' and '3.14' are
+ * Numbers, 'pilgrim' is not.
  *
  * Cowlishaw §2.3, p. 27 — Numbers
  */

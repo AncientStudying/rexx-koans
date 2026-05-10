@@ -19,11 +19,12 @@ n = 0
 n = n + 1; CALL m 'eq', 7, 3 + 4, n
 n = n + 1; CALL m 'eq', 6, 12 / 2, n
 
-/* Concept: comparison.
- * The = operator compares with numeric coercion: '5' = 5.0 is true
- * because both are the same number. The == operator is strict and
- * compares the literal characters: '5' == 5.0 is false because the
- * strings differ. \= and \== negate the two forms.
+/* Concept: comparative operators.
+ * The = operator performs a normal comparison: '5' = 5.0 is true
+ * because both are the same number. The == operator is a strict
+ * comparison and compares strings character-by-character without
+ * padding: '5' == 5.0 is false because the strings differ. \= and
+ * \== negate the two forms.
  *
  * Cowlishaw §2.3, p. 26
  */
@@ -31,9 +32,9 @@ n = n + 1; CALL m 'true', ('5' = 5.0), '', n
 n = n + 1; CALL m 'true', ('5' \== 5.0), '', n
 
 /* Concept: logical operators.
- * & is AND, | is OR, \ is NOT. The truth values of REXX are the
- * strings '0' (false) and '1' (true). Anything else passed to a
- * logical operator is an error.
+ * & is And, | is Inclusive or, \ is Logical not. The Logical
+ * (Boolean) values are the strings '0' (false) and '1' (true).
+ * Anything else passed to a logical operator is an error.
  *
  * Cowlishaw §2.3, p. 27 — Logical (Boolean)
  */
@@ -41,10 +42,11 @@ n = n + 1; CALL m 'true', (1 & 1), '', n
 n = n + 1; CALL m 'true', (0 | 1), '', n
 
 /* Concept: concatenation.
- * Two values written next to each other with no operator between
- * them are concatenated. With at least one blank between them, the
- * result has exactly one blank inserted (blank concatenation). The
- * || operator forces concatenation regardless of whitespace.
+ * Two terms written next to each other with no operator between
+ * them are concatenated by abuttal. With at least one blank
+ * between them, the blank operator inserts exactly one blank in
+ * the result. The || operator joins without a blank, regardless
+ * of whitespace.
  *
  * Cowlishaw §2.3, p. 25 — Concatenation
  */

@@ -19,7 +19,7 @@ n = 0
 greeting = 'namaste'
 n = n + 1; CALL m 'eq', 'namaste', greeting, n
 
-/* Concept: uninitialized symbols.
+/* Concept: uninitialized variables.
  * A simple symbol that has never been assigned evaluates to its own
  * name in uppercase. There is no separate "undefined" value -- the
  * variable is its name until you bind it. This is also why the
@@ -33,7 +33,7 @@ n = n + 1; CALL m 'eq', 'NEVER_SET', NEVER_SET, n
 /* Concept: case folding of symbols.
  * REXX simple symbols are case-insensitive. Whether you write
  * greeting, Greeting, or GREETING, you reference the same variable.
- * Quoted strings are case-sensitive: the variable greeting can hold
+ * Literal strings are case-sensitive: the variable greeting can hold
  * 'namaste' while still being equal to itself when written as
  * GREETING.
  *

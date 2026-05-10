@@ -65,13 +65,13 @@ preconditions assumed by `research.md` §2 (the substitution table)
 and §3 / §4 (the layered-prose / re-label proposals). Catches
 corpus drift between plan and implementation.
 
-- [ ] T001 [P] Verify `docs/cowlishaw_index.md` exists at HEAD on the feature branch and is byte-identical to its `main`-branch state (the M2.1 deliverable). `git diff main -- docs/cowlishaw_index.md` MUST be empty. (FR-007 read-only invariant baselined.)
-- [ ] T002 [P] Verify the substitution-table source strings (`research.md` §2 column "Source string") are still present in their listed files. Run the negative greps from `quickstart.md` Step 4; expect EVERY grep to return at least one match (the source strings exist pre-feature). If any source string has drifted, halt and reconcile against the corpus before proceeding.
-- [ ] T003 [P] Verify the koan-00 source blocks (`research.md` §3.0–§3.3) match the current `koans/00_about_asserts.rexx` lines 19–28 (equality), 32–37 (difference), 40–46 (truth), 50–56 (type) byte-for-byte. If any block has drifted, halt and reconcile.
-- [ ] T004 [P] Verify the koan-01 source block (`research.md` §4.1, koan 01 lines 33–40 and solution 01 lines 29–36) matches the current files. If drifted, halt and reconcile.
-- [ ] T005 [P] Verify `bin/lint_citations` runs green on the unmodified corpus (`bin/lint_citations` should print `6/6 koans passed lint.` and exit 0). This baselines the M2.2-tightened canonical-form check; the rewrites in Phase 3 must keep it green commit-by-commit.
-- [ ] T006 [P] Verify `bin/verify_solutions` runs green on the unmodified corpus (`6/6 solutions passed.`, exit 0). Baselines the runtime-correctness check.
-- [ ] T007 [P] Capture the runner-stdout-fixture diff baseline by running `quickstart.md` Step 3 against the unmodified corpus. Expected: empty diff. This establishes the FR-008 invariance baseline; Phase 3 must keep it empty.
+- [X] T001 [P] Verify `docs/cowlishaw_index.md` exists at HEAD on the feature branch and is byte-identical to its `main`-branch state (the M2.1 deliverable). `git diff main -- docs/cowlishaw_index.md` MUST be empty. (FR-007 read-only invariant baselined.)
+- [X] T002 [P] Verify the substitution-table source strings (`research.md` §2 column "Source string") are still present in their listed files. Run the negative greps from `quickstart.md` Step 4; expect EVERY grep to return at least one match (the source strings exist pre-feature). If any source string has drifted, halt and reconcile against the corpus before proceeding.
+- [X] T003 [P] Verify the koan-00 source blocks (`research.md` §3.0–§3.3) match the current `koans/00_about_asserts.rexx` lines 19–28 (equality), 32–37 (difference), 40–46 (truth), 50–56 (type) byte-for-byte. If any block has drifted, halt and reconcile.
+- [X] T004 [P] Verify the koan-01 source block (`research.md` §4.1, koan 01 lines 33–40 and solution 01 lines 29–36) matches the current files. If drifted, halt and reconcile.
+- [X] T005 [P] Verify `bin/lint_citations` runs green on the unmodified corpus (`bin/lint_citations` should print `6/6 koans passed lint.` and exit 0). This baselines the M2.2-tightened canonical-form check; the rewrites in Phase 3 must keep it green commit-by-commit.
+- [X] T006 [P] Verify `bin/verify_solutions` runs green on the unmodified corpus (`6/6 solutions passed.`, exit 0). Baselines the runtime-correctness check.
+- [X] T007 [P] Capture the runner-stdout-fixture diff baseline by running `quickstart.md` Step 3 against the unmodified corpus. Expected: empty diff. This establishes the FR-008 invariance baseline; Phase 3 must keep it empty.
 
 ---
 
@@ -93,14 +93,14 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 1 — Bulk substitution table (research.md §2)
 
-- [ ] T008 [P] [US1] Apply the row-1 substitution from `research.md` §2 to `koans/01_about_strings.rexx` only (per the per-substitution-parity check; the source-term does not appear in `solutions/01_about_strings.rexx`):
+- [X] T008 [P] [US1] Apply the row-1 substitution from `research.md` §2 to `koans/01_about_strings.rexx` only (per the per-substitution-parity check; the source-term does not appear in `solutions/01_about_strings.rexx`):
   - `REXX has no separate character literal.` → `REXX has no separate character type.`
   Use `Edit` (single occurrence). Anchor: line 13 of the unmodified file.
-- [ ] T009 [P] [US1] Apply the row-2, row-3, row-4 substitutions to BOTH `koans/02_about_variables.rexx` and `solutions/02_about_variables.rexx`. Use `Edit replace_all=true` for each:
+- [X] T009 [P] [US1] Apply the row-2, row-3, row-4 substitutions to BOTH `koans/02_about_variables.rexx` and `solutions/02_about_variables.rexx`. Use `Edit replace_all=true` for each:
   - Row 2: `Concept: uninitialized symbols.` → `Concept: uninitialized variables.` (both files)
   - Row 3: `the unbound symbol NEVER_SET` → `the uninitialized variable NEVER_SET` (koan only — phrase does not appear in solution)
   - Row 4: `Quoted strings are case-sensitive` → `Literal strings are case-sensitive` (both files)
-- [ ] T010 [P] [US1] Apply the row-5 through row-13 substitutions across `koans/03_about_expressions.rexx` and `solutions/03_about_expressions.rexx`. Use `Edit replace_all=true` for each (apply to both files except where noted koan-only):
+- [X] T010 [P] [US1] Apply the row-5 through row-13 substitutions across `koans/03_about_expressions.rexx` and `solutions/03_about_expressions.rexx`. Use `Edit replace_all=true` for each (apply to both files except where noted koan-only):
   - Row 5: `arithmetic, comparison,` → `arithmetic, comparative,` (koan only — solution has terse header)
   - Row 6: `Concept: comparison.` → `Concept: comparative operators.` (both files)
   - Row 7: `compares with numeric coercion` → `performs a normal comparison` (both files)
@@ -110,11 +110,11 @@ corpus drift between plan and implementation.
   - Row 11: `Two values written next to each other with no operator between them are concatenated.` → `Two terms written next to each other with no operator between them are concatenated by abuttal.` (both files)
   - Row 12: `the result has exactly one blank inserted (blank concatenation).` → `the blank operator inserts exactly one blank in the result.` (both files)
   - Row 13: `The || operator forces concatenation regardless of whitespace.` → `The || operator joins without a blank, regardless of whitespace.` (both files)
-- [ ] T011 [P] [US1] Apply the row-14 through row-16 substitutions across `koans/04_about_clauses.rexx` and `solutions/04_about_clauses.rexx`. Use `Edit replace_all=true` for each:
+- [X] T011 [P] [US1] Apply the row-14 through row-16 substitutions across `koans/04_about_clauses.rexx` and `solutions/04_about_clauses.rexx`. Use `Edit replace_all=true` for each:
   - Row 14: `what marks the boundary of one clause and how a clause may be stretched across more than one line.` → `what implies the semicolon at the end of a clause and how a continuation character carries a clause across more than one line.` (koan only — solution has terse header)
   - Row 15: `A comma at the end of a line continues the clause onto the next line.` → `A continuation character (a comma) at the end of a line continues the clause onto the next line.` (both files)
   - Row 16: `A REXX comment opens with slash-star and closes with star-slash.` → `A REXX comment opens with `/*` and closes with `*/`.` (both files)
-- [ ] T012 [P] [US1] Apply the row-17 through row-22 substitutions across `koans/05_about_say.rexx` and `solutions/05_about_say.rexx`. Use `Edit replace_all=true` for each:
+- [X] T012 [P] [US1] Apply the row-17 through row-22 substitutions across `koans/05_about_say.rexx` and `solutions/05_about_say.rexx`. Use `Edit replace_all=true` for each:
   - Row 17: `emits the result to standard output.` → `emits the result to the default character output stream.` (koan only — solution has terse header)
   - Row 18: `emits the resulting string to standard output followed by` → `emits the resulting string to the default character output stream followed by` (both files)
   - Row 19: `blank-concatenates` → `joins by the blank operator` (koan only — phrase does not appear in solution)
@@ -124,8 +124,8 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 1 — Koan 00 framework-vs-REXX layering (research.md §3)
 
-- [ ] T013 [US1] Rewrite the four concept blocks in `koans/00_about_asserts.rexx` per `research.md` §3.0–§3.3. Replace each block (equality lines 19–28, difference lines 32–37, truth lines 40–46, type lines 50–56) with the **Layered (proposed)** prose verbatim from §3. Each rewrite preserves the existing trailing `Cowlishaw §N.N, p. NN` citation line verbatim (FR-006) and adds the new in-prose parenthetical Cowlishaw references shown in the proposed prose (permitted per `research.md` §5). Use `Edit` per block, providing enough surrounding context to make `old_string` unique (the four blocks share the `Cowlishaw §2.5, p. 32` trailing citation in three of four cases; include the concept heading and surrounding lines so each `Edit` is unambiguous).
-- [ ] T014 [US1] Apply the per-substitution-parity solution-side updates in `solutions/00_about_asserts.rexx` per `research.md` §3.4. The solution's pre-feature divergent prose (terse file header, "pilgrim's first instrument" framing, "mirror of `eq`" framing, conventional-empty-string note) is preserved. Apply ONLY the vocabulary-term substitutions inside the diverging prose:
+- [X] T013 [US1] Rewrite the four concept blocks in `koans/00_about_asserts.rexx` per `research.md` §3.0–§3.3. Replace each block (equality lines 19–28, difference lines 32–37, truth lines 40–46, type lines 50–56) with the **Layered (proposed)** prose verbatim from §3. Each rewrite preserves the existing trailing `Cowlishaw §N.N, p. NN` citation line verbatim (FR-006) and adds the new in-prose parenthetical Cowlishaw references shown in the proposed prose (permitted per `research.md` §5). Use `Edit` per block, providing enough surrounding context to make `old_string` unique (the four blocks share the `Cowlishaw §2.5, p. 32` trailing citation in three of four cases; include the concept heading and surrounding lines so each `Edit` is unambiguous).
+- [X] T014 [US1] Apply the per-substitution-parity solution-side updates in `solutions/00_about_asserts.rexx` per `research.md` §3.4. The solution's pre-feature divergent prose (terse file header, "pilgrim's first instrument" framing, "mirror of `eq`" framing, conventional-empty-string note) is preserved. Apply ONLY the vocabulary-term substitutions inside the diverging prose:
   - Equality block (solution lines 12–17): rewrite the `compared as REXX strings, with numeric coercion when both look like numbers` clause to use Cowlishaw normal-comparison vocabulary, mirroring the koan-side layered prose's REXX-mechanism paragraph in style (the "pilgrim's first instrument" opening is preserved). Add the in-prose `(Cowlishaw §2.3, p. 26)` parenthetical for the comparative operator.
   - Difference block (solution lines 24–27): no vocabulary terms in scope; preserve the block verbatim.
   - Truth block (solution lines 33–37): substitute `the REXX boolean 1` → `the Logical (Boolean) value '1'` and `Comparisons` → `comparative operators`. Add the in-prose `(Cowlishaw §2.3, p. 26)` and `(Cowlishaw §2.3, p. 27 — Logical (Boolean))` parentheticals matching the koan-side layered prose.
@@ -134,15 +134,15 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 1 — Koan 01 targeted re-label (research.md §4)
 
-- [ ] T015 [US1] Rewrite the numbers concept block in `koans/01_about_strings.rexx` (lines 33–40) per `research.md` §4.1. Replace with the **Re-labeled (proposed)** prose verbatim. Preserves the existing trailing `Cowlishaw §2.3, p. 27 — Numbers` citation line (FR-006); adds the in-prose `(Cowlishaw §2.9, p. 91)` parenthetical for DATATYPE (permitted per `research.md` §5). Use `Edit`.
-- [ ] T016 [US1] Rewrite the numbers concept block in `solutions/01_about_strings.rexx` (lines 29–36) per `research.md` §4.1's solution-side proposal. Same canonical re-labeled prose as T015 but preserving the solution's pre-feature `'42' and '3.14' are numbers, 'pilgrim' is not` extension (which becomes `'42' and '3.14' are Numbers, 'pilgrim' is not`). Use `Edit`.
+- [X] T015 [US1] Rewrite the numbers concept block in `koans/01_about_strings.rexx` (lines 33–40) per `research.md` §4.1. Replace with the **Re-labeled (proposed)** prose verbatim. Preserves the existing trailing `Cowlishaw §2.3, p. 27 — Numbers` citation line (FR-006); adds the in-prose `(Cowlishaw §2.9, p. 91)` parenthetical for DATATYPE (permitted per `research.md` §5). Use `Edit`.
+- [X] T016 [US1] Rewrite the numbers concept block in `solutions/01_about_strings.rexx` (lines 29–36) per `research.md` §4.1's solution-side proposal. Same canonical re-labeled prose as T015 but preserving the solution's pre-feature `'42' and '3.14' are numbers, 'pilgrim' is not` extension (which becomes `'42' and '3.14' are Numbers, 'pilgrim' is not`). Use `Edit`.
 
 ### Local verification for User Story 1
 
-- [ ] T017 [US1] Run `bin/lint_citations` on the rewritten corpus. Expected output: `6/6 koans passed lint.`, exit code 0. The M2.2-tightened canonical-form check still passes — every existing trailing citation is unchanged (FR-006), and every new in-prose parenthetical is in canonical form (per `research.md` §5).
-- [ ] T018 [US1] Run `bin/verify_solutions` on the rewritten corpus. Expected output: `6/6 solutions passed.`, exit code 0. Catches any edit that accidentally landed outside a comment block.
-- [ ] T019 [US1] Run the runner-stdout-fixture diff per `quickstart.md` Step 3. Expected: empty diff. Comments are never echoed; this is the FR-008 invariance canary.
-- [ ] T020 [US1] Substitution-table coverage spot check: run the negative greps from `quickstart.md` Step 4 (each MUST return zero matches) and the positive greps (each MUST return ≥ 1 match in every file listed). If any negative grep returns a hit, the substitution was missed for that file; re-apply.
+- [X] T017 [US1] Run `bin/lint_citations` on the rewritten corpus. Expected output: `6/6 koans passed lint.`, exit code 0. The M2.2-tightened canonical-form check still passes — every existing trailing citation is unchanged (FR-006), and every new in-prose parenthetical is in canonical form (per `research.md` §5).
+- [X] T018 [US1] Run `bin/verify_solutions` on the rewritten corpus. Expected output: `6/6 solutions passed.`, exit code 0. Catches any edit that accidentally landed outside a comment block.
+- [X] T019 [US1] Run the runner-stdout-fixture diff per `quickstart.md` Step 3. Expected: empty diff. Comments are never echoed; this is the FR-008 invariance canary.
+- [X] T020 [US1] Substitution-table coverage spot check: run the negative greps from `quickstart.md` Step 4 (each MUST return zero matches) and the positive greps (each MUST return ≥ 1 match in every file listed). If any negative grep returns a hit, the substitution was missed for that file; re-apply.
 
 **Checkpoint**: At this point, every Stage I (koan, solution) pair carries Cowlishaw-canonical vocabulary throughout, koan 00 carries the framework-vs-REXX layering at every concept block, and koan 01's numbers block carries the targeted re-label. The corpus passes the M2.2-tightened lint, the verify_solutions check, and the runner fixture diff. US1 is delivered.
 
@@ -156,11 +156,11 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 2
 
-- [ ] T021 [US2] UAT-1 ("Literal string" vs "string literal"): confirm `koans/01_about_strings.rexx` and `solutions/01_about_strings.rexx` reference the construct as `literal string(s)` (matching the §2.2 Literal strings vocab). Cross-check: the legacy phrasings "Quoted strings" (closed by §2 row 4) and "string literal" do not appear anywhere in `koans/` or `solutions/`. Run `grep -nF 'string literal' koans/*.rexx solutions/*.rexx`; expect zero matches. Run `grep -nF 'Quoted strings' koans/*.rexx solutions/*.rexx`; expect zero matches.
-- [ ] T022 [US2] UAT-2 ("Symbol" vs "identifier" / "variable name"): confirm `koans/02_about_variables.rexx` and `solutions/02_about_variables.rexx` distinguish *symbol* (syntactic) from *variable* (bound) per Cowlishaw §2.5; the concept heading reads `uninitialized variables` (§2 row 2) and the koan body references `the uninitialized variable NEVER_SET` (§2 row 3). Run `grep -nFE 'identifier|variable name' koans/*.rexx solutions/*.rexx`; expect zero matches in technical-naming roles. (`identifier` may appear in pilgrim voice; verify any hit is voice-bearing, not construct-naming.)
-- [ ] T023 [US2] UAT-3 ("Comparative" vs "Comparisons"): confirm `koans/03_about_expressions.rexx` and `solutions/03_about_expressions.rexx` use `comparative` for the family naming and `comparative operators` for the individual operators (closed by §2 rows 5, 6). Run `grep -nF 'Comparisons' koans/*.rexx solutions/*.rexx`; expect zero matches in technical-naming roles. The trailing citations `Cowlishaw §2.3, p. 26` and `Cowlishaw §2.3, p. 27 — Logical (Boolean)` are unchanged (FR-006).
-- [ ] T024 [US2] UAT-4 ("Logical (Boolean)" vs "boolean"): confirm `koans/03_about_expressions.rexx` line "The Logical (Boolean) values are the strings '0' (false) and '1' (true)." (closed by §2 row 10) and koan 00's truth block (closed by `research.md` §3.2 layering) name the family with the parenthesized clarifier preserved. Run `grep -nFE 'boolean|Boolean' koans/*.rexx solutions/*.rexx`; verify every hit is in canonical `Logical (Boolean)` form, not bare lowercase `boolean`.
-- [ ] T025 [US2] UAT-5 (the "assertion" framing in koan 00): confirm koan 00's four concept blocks (and the matching four solution blocks) present the framework verb and the REXX mechanism as two distinct things per FR-002 / `research.md` §3. Read `koans/00_about_asserts.rexx` and `solutions/00_about_asserts.rexx` cover to cover; classify every technical-term appearance as framework or REXX vocabulary; confirm no term is silently presented as both or as neither.
+- [X] T021 [US2] UAT-1 ("Literal string" vs "string literal"): confirm `koans/01_about_strings.rexx` and `solutions/01_about_strings.rexx` reference the construct as `literal string(s)` (matching the §2.2 Literal strings vocab). Cross-check: the legacy phrasings "Quoted strings" (closed by §2 row 4) and "string literal" do not appear anywhere in `koans/` or `solutions/`. Run `grep -nF 'string literal' koans/*.rexx solutions/*.rexx`; expect zero matches. Run `grep -nF 'Quoted strings' koans/*.rexx solutions/*.rexx`; expect zero matches.
+- [X] T022 [US2] UAT-2 ("Symbol" vs "identifier" / "variable name"): confirm `koans/02_about_variables.rexx` and `solutions/02_about_variables.rexx` distinguish *symbol* (syntactic) from *variable* (bound) per Cowlishaw §2.5; the concept heading reads `uninitialized variables` (§2 row 2) and the koan body references `the uninitialized variable NEVER_SET` (§2 row 3). Run `grep -nFE 'identifier|variable name' koans/*.rexx solutions/*.rexx`; expect zero matches in technical-naming roles. (`identifier` may appear in pilgrim voice; verify any hit is voice-bearing, not construct-naming.)
+- [X] T023 [US2] UAT-3 ("Comparative" vs "Comparisons"): confirm `koans/03_about_expressions.rexx` and `solutions/03_about_expressions.rexx` use `comparative` for the family naming and `comparative operators` for the individual operators (closed by §2 rows 5, 6). Run `grep -nF 'Comparisons' koans/*.rexx solutions/*.rexx`; expect zero matches in technical-naming roles. The trailing citations `Cowlishaw §2.3, p. 26` and `Cowlishaw §2.3, p. 27 — Logical (Boolean)` are unchanged (FR-006).
+- [X] T024 [US2] UAT-4 ("Logical (Boolean)" vs "boolean"): confirm `koans/03_about_expressions.rexx` line "The Logical (Boolean) values are the strings '0' (false) and '1' (true)." (closed by §2 row 10) and koan 00's truth block (closed by `research.md` §3.2 layering) name the family with the parenthesized clarifier preserved. Run `grep -nFE 'boolean|Boolean' koans/*.rexx solutions/*.rexx`; verify every hit is in canonical `Logical (Boolean)` form, not bare lowercase `boolean`.
+- [X] T025 [US2] UAT-5 (the "assertion" framing in koan 00): confirm koan 00's four concept blocks (and the matching four solution blocks) present the framework verb and the REXX mechanism as two distinct things per FR-002 / `research.md` §3. Read `koans/00_about_asserts.rexx` and `solutions/00_about_asserts.rexx` cover to cover; classify every technical-term appearance as framework or REXX vocabulary; confirm no term is silently presented as both or as neither.
 
 **Checkpoint**: At this point, every UAT-flagged terminology gap is verified closed. US2 is delivered.
 
@@ -174,7 +174,7 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Koan-00 layering grep check: from `quickstart.md` Step 5, run:
+- [X] T026 [US3] Koan-00 layering grep check: from `quickstart.md` Step 5, run:
   ```sh
   grep -c 'assertion verb'             koans/00_about_asserts.rexx
   grep -c 'comparative operator'       koans/00_about_asserts.rexx
@@ -182,9 +182,9 @@ corpus drift between plan and implementation.
   grep -c 'DATATYPE'                   koans/00_about_asserts.rexx
   ```
   Expected: `assertion verb` ≥ 4; each REXX mechanism term ≥ 1. If any count is short, the corresponding concept block's layered prose was not fully applied; identify and re-apply.
-- [ ] T027 [US3] Solution-00 layering grep check: same greps against `solutions/00_about_asserts.rexx`. Expected: each term ≥ 1 (the solution's wording differs, so `assertion verb` may be lower than 4, but the REXX mechanism terms must all appear since they were applied per `research.md` §3.4).
-- [ ] T028 [US3] Pilgrim-voice preservation check: confirm `koans/00_about_asserts.rexx` file header still opens with `Welcome, pilgrim. Before you walk the path of REXX you must learn the four kinds of assertion.` (the FR-012 voice carve-out — pilgrim-voice flourishes, station taglines, and the `four kinds of assertion` framing are preserved verbatim). Run `grep -nF 'Welcome, pilgrim' koans/00_about_asserts.rexx`; expect one match.
-- [ ] T029 [US3] SC-010 reviewer walk: read `koans/00_about_asserts.rexx` cover-to-cover (file header + every concept block) and then `solutions/00_about_asserts.rexx` the same way. For each technical term in the prose, classify it as either *framework vocabulary* (the assertion verbs `eq`/`neq`/`true`/`datatype`, the umbrella term *assertion*, the per-test pass/fail mechanic, `FILL_ME_IN`) or *REXX vocabulary* (Cowlishaw-canonical: comparative operator, Logical (Boolean), DATATYPE, etc.). Confirm every term is unambiguously one or the other (no term in both classifications, no term in neither). Target: under 60 seconds per file. If any term resists classification, the layered prose in `research.md` §3 was not fully applied or contains a residual ambiguity; identify and re-apply at T013/T014. Mechanizes SC-010.
+- [X] T027 [US3] Solution-00 layering grep check: same greps against `solutions/00_about_asserts.rexx`. Expected: each term ≥ 1 (the solution's wording differs, so `assertion verb` may be lower than 4, but the REXX mechanism terms must all appear since they were applied per `research.md` §3.4).
+- [X] T028 [US3] Pilgrim-voice preservation check: confirm `koans/00_about_asserts.rexx` file header still opens with `Welcome, pilgrim. Before you walk the path of REXX you must learn the four kinds of assertion.` (the FR-012 voice carve-out — pilgrim-voice flourishes, station taglines, and the `four kinds of assertion` framing are preserved verbatim). Run `grep -nF 'Welcome, pilgrim' koans/00_about_asserts.rexx`; expect one match.
+- [X] T029 [US3] SC-010 reviewer walk: read `koans/00_about_asserts.rexx` cover-to-cover (file header + every concept block) and then `solutions/00_about_asserts.rexx` the same way. For each technical term in the prose, classify it as either *framework vocabulary* (the assertion verbs `eq`/`neq`/`true`/`datatype`, the umbrella term *assertion*, the per-test pass/fail mechanic, `FILL_ME_IN`) or *REXX vocabulary* (Cowlishaw-canonical: comparative operator, Logical (Boolean), DATATYPE, etc.). Confirm every term is unambiguously one or the other (no term in both classifications, no term in neither). Target: under 60 seconds per file. If any term resists classification, the layered prose in `research.md` §3 was not fully applied or contains a residual ambiguity; identify and re-apply at T013/T014. Mechanizes SC-010.
 
 **Checkpoint**: At this point, koan-00's layering is verified complete and pilgrim voice is preserved. US3 is delivered.
 
@@ -198,7 +198,7 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 4
 
-- [ ] T030 [US4] Per-substitution parity spot check: from `quickstart.md` Step 6, run:
+- [X] T030 [US4] Per-substitution parity spot check: from `quickstart.md` Step 6, run:
   ```sh
   for n in 00 01 02 03 04 05; do
     echo "=== ${n} ==="
@@ -207,8 +207,8 @@ corpus drift between plan and implementation.
   done
   ```
   Expected: no output for any pair. Hits indicate a substitution applied to one side of the pair but not the other; identify and re-apply.
-- [ ] T031 [US4] Citation-line read-only spot check: confirm FR-006 holds. Run `git diff main -- koans/ solutions/ | grep -E '^\+.*Cowlishaw §' | sort -u` and `git diff main -- koans/ solutions/ | grep -E '^-.*Cowlishaw §' | sort -u`. Every `+` line must be a NEW in-prose parenthetical reference (not a modified pre-feature trailing citation); every `-` line must be empty (no removed citations). If a pre-feature trailing citation line appears in the `-` output, FR-006 was violated; identify and revert. (Mechanizes SC-007.)
-- [ ] T032 [US4] SC-008 / SC-009 mechanical check: confirm `docs/cowlishaw_index.md` and `bin/lint_citations` are byte-identical between the feature branch HEAD and `main`. Run:
+- [X] T031 [US4] Citation-line read-only spot check: confirm FR-006 holds. Run `git diff main -- koans/ solutions/ | grep -E '^\+.*Cowlishaw §' | sort -u` and `git diff main -- koans/ solutions/ | grep -E '^-.*Cowlishaw §' | sort -u`. Every `+` line must be a NEW in-prose parenthetical reference (not a modified pre-feature trailing citation); every `-` line must be empty (no removed citations). If a pre-feature trailing citation line appears in the `-` output, FR-006 was violated; identify and revert. (Mechanizes SC-007.)
+- [X] T032 [US4] SC-008 / SC-009 mechanical check: confirm `docs/cowlishaw_index.md` and `bin/lint_citations` are byte-identical between the feature branch HEAD and `main`. Run:
   ```sh
   git diff main -- docs/cowlishaw_index.md bin/lint_citations
   ```
@@ -225,8 +225,8 @@ corpus drift between plan and implementation.
 **Purpose**: PR preparation and final review.
 
 - [ ] T035 [P] Open a pull request from `005-vocab-review` to `main` with a description that summarizes: the 22 distinct vocabulary substitutions (link to `research.md` §2), the 4 koan-00 framework-vs-REXX layered concept blocks (link to `research.md` §3), the 1 koan-01 + solution-01 targeted re-label (link to `research.md` §4), the FR-004 spec revision to per-substitution parity (link to spec.md Clarifications session 2026-05-09 third bullet), and the 5 UAT-flagged candidates closed (link to `data-model.md` UAT join table). Include a checklist confirming SC-001 through SC-010.
-- [ ] T036 [P] Run the `quickstart.md` recipe end-to-end one more time on a fresh clone (or after `git clean -fdx` on the working tree) to confirm a contributor with no local state can reproduce the green build. Note any quickstart-doc improvements needed. (Steps 1+2+3+4+5+6 mechanically exercised in T017/T018/T019/T020/T026/T030.)
-- [ ] T037 Final review pass: re-read `spec.md` Out of Scope and Assumptions sections; confirm no item has been silently violated. Specifically: index unmodified (FR-007, SC-008), runner fixture unchanged (FR-008, SC-006), no Stage II–VI files touched, no `bin/lint_citations` change (FR-010, SC-009), no `lib/meditation.rexx` change (FR-011), no pre-feature trailing citation lines modified (FR-006), no PDF-posture changes, no FR-014 (M2.2 deferred lint extension) work landed, voice prose preserved (FR-012, T028).
+- [X] T036 [P] Run the `quickstart.md` recipe end-to-end one more time on a fresh clone (or after `git clean -fdx` on the working tree) to confirm a contributor with no local state can reproduce the green build. Note any quickstart-doc improvements needed. (Steps 1+2+3+4+5+6 mechanically exercised in T017/T018/T019/T020/T026/T030.)
+- [X] T037 Final review pass: re-read `spec.md` Out of Scope and Assumptions sections; confirm no item has been silently violated. Specifically: index unmodified (FR-007, SC-008), runner fixture unchanged (FR-008, SC-006), no Stage II–VI files touched, no `bin/lint_citations` change (FR-010, SC-009), no `lib/meditation.rexx` change (FR-011), no pre-feature trailing citation lines modified (FR-006), no PDF-posture changes, no FR-014 (M2.2 deferred lint extension) work landed, voice prose preserved (FR-012, T028).
 
 ---
 

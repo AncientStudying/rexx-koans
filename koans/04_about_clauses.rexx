@@ -3,8 +3,9 @@
  * Station: The Shape of an Instruction
  *
  * A REXX program is a sequence of clauses. The pilgrim must learn
- * what marks the boundary of one clause and how a clause may be
- * stretched across more than one line.
+ * what implies the semicolon at the end of a clause and how a
+ * continuation character carries a clause across more than one
+ * line.
  *
  * Cowlishaw §2.4, p. 31
  */
@@ -22,9 +23,9 @@ a = 1; b = 2
 n = n + 1; CALL m 'eq', FILL_ME_IN, a + b, n
 
 /* Concept: continuation.
- * A comma at the end of a line continues the clause onto the next
- * line. The clause ends only when a non-comma, non-comment line
- * terminates it.
+ * A continuation character (a comma) at the end of a line continues
+ * the clause onto the next line. The clause ends only when a
+ * non-comma, non-comment line terminates it.
  *
  * Cowlishaw §2.2, p. 23
  */
@@ -33,7 +34,7 @@ total = ,
 n = n + 1; CALL m 'eq', 30, total, n
 
 /* Concept: comments.
- * A REXX comment opens with slash-star and closes with star-slash.
+ * A REXX comment opens with `/*` and closes with `*/`.
  * It may appear anywhere whitespace can and may span multiple lines.
  * It produces no value; the surrounding clause is unaffected. The
  * trailing comment beside the assignment below is invisible to the

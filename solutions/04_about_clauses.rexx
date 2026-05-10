@@ -20,9 +20,9 @@ a = 1; b = 2
 n = n + 1; CALL m 'eq', 3, a + b, n
 
 /* Concept: continuation.
- * A comma at the end of a line continues the clause onto the next
- * line. The clause ends only when a non-comma, non-comment line
- * terminates it.
+ * A continuation character (a comma) at the end of a line continues
+ * the clause onto the next line. The clause ends only when a
+ * non-comma, non-comment line terminates it.
  *
  * Cowlishaw §2.2, p. 23
  */
@@ -31,7 +31,7 @@ total = ,
 n = n + 1; CALL m 'eq', 30, total, n
 
 /* Concept: comments.
- * A REXX comment opens with slash-star and closes with star-slash.
+ * A REXX comment opens with `/*` and closes with `*/`.
  * It may appear anywhere whitespace can and may span multiple lines.
  * It produces no value; the surrounding clause is unaffected. The
  * trailing comment beside the assignment below is invisible to the
