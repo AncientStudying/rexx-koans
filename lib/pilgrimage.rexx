@@ -93,10 +93,35 @@ END
 CALL 'lib/stations.rexx' 'list', records_blob, max_w
 
 IF failed_idx > 0 THEN DO
-  /* Indent each line of captured koan output with two spaces. */
+  /* Indent each line of captured koan output with two spaces; while
+   * walking, capture the meditation diagnostic's reported line number
+   * for the scripture-emission pass.
+   */
+  fail_line = 0
   DO WHILE failed_output \= ''
     PARSE VAR failed_output line '0a'x failed_output
     IF line \= '' THEN SAY '  'line
+    p = POS(', line ', line)
+    IF p > 0 & POS('Damaged at:', line) > 0 THEN DO
+      rest = SUBSTR(line, p + LENGTH(', line '))
+      per = POS('.', rest)
+      IF per > 0 THEN rest = LEFT(rest, per - 1)
+      rest = STRIP(rest)
+      IF DATATYPE(rest, 'W') THEN fail_line = rest
+    END
+  END
+  /* Scripture-emission pass (M3, FR-012 / FR-024 / FR-025). */
+  IF fail_line > 0 THEN DO
+    key = scripture_for_failure(koans.failed_idx, fail_line)
+    IF key \= '' THEN DO
+      CALL 'lib/scripture.rexx' 'fetch', key
+      scrip = RESULT
+      IF scrip \= '' THEN DO
+        PARSE VAR scrip principle '09'x citation
+        SAY 'From the Bathonian ('citation'):'
+        SAY '  'principle
+      END
+    END
   END
   SAY ''
   /* Resolve failed topic for the summary line. */
@@ -110,7 +135,7 @@ END
 
 CALL 'lib/stations.rexx' 'summary', koans.0, koans.0, ''
 SAY ''
-SAY '  The pilgrim has walked the foundation. The path opens further.'
+SAY '  The pilgrim has walked the foundation, the path, and the tools. The path opens further.'
 EXIT 0
 
 load_manifest:
@@ -133,3 +158,35 @@ basename: PROCEDURE
   p = LASTPOS('/', path)
   IF p = 0 THEN RETURN path
   RETURN SUBSTR(path, p + 1)
+
+scripture_for_failure: PROCEDURE
+  /* Block-scoped backward scan from fail_line - 1 toward line 1.
+   * Returns the bound scripture key, or empty string if unbound.
+   * Events: a Scripture-directive continuation comment line binds;
+   *         a comment-block opener (slash-star) unbinds.
+   * Contract: specs/008-m3-the-path/contracts/koan_directives.md.
+   */
+  PARSE ARG koan_path, fail_line
+  IF \DATATYPE(fail_line, 'W') THEN RETURN ''
+  IF fail_line < 2 THEN RETURN ''
+  IF STREAM(koan_path, 'C', 'QUERY EXISTS') = '' THEN RETURN ''
+  lines. = ''
+  lines.0 = 0
+  DO WHILE LINES(koan_path) > 0
+    n = lines.0 + 1
+    lines.0 = n
+    lines.n = LINEIN(koan_path)
+  END
+  CALL STREAM koan_path, 'C', 'CLOSE'
+  upper = fail_line - 1
+  IF upper > lines.0 THEN upper = lines.0
+  DO i = upper TO 1 BY -1
+    s = STRIP(lines.i)
+    IF LEFT(s, 1) = '*' & LEFT(s, 2) \= '*/' THEN s = STRIP(SUBSTR(s, 2))
+    IF LEFT(s, 11) = 'Scripture: ' THEN DO
+      key = STRIP(SUBSTR(s, 12))
+      RETURN key
+    END
+    IF LEFT(s, 2) = '/*' THEN RETURN ''
+  END
+  RETURN ''
