@@ -1,65 +1,85 @@
 #!/usr/bin/env regina
-/* bin/lint_citations — verify each koan has a Cowlishaw citation and a Station: directive.
+/* bin/lint_citations — verify each koan/solution carries a Cowlishaw
+ * citation, that every citation resolves against docs/cowlishaw_index.md,
+ * and that each koan has exactly one Station: directive.
  *
- * Contract: specs/004-m2-2-citation-rewrite/contracts/lint_citations.md.
- * Citation:   Cowlishaw §<sec>, p. <page>                       (bare canonical form)
- *       or:   Cowlishaw §<sec>, p. <page> — <heading>           (suffixed form)
- *   <sec>     digits, optionally .digits one or more times
- *   <page>    one or more digits
- *   sep       in suffixed form, exactly: space + em-dash (U+2014, UTF-8 'E28094'x) + space
- *   <heading> non-empty after stripping (suffixed form only)
- *   tail      after <page> or <heading>, only whitespace and an optional comment-close are permitted
- * Station:    line in the leading comment block matching `Station: <text>`
- *   exactly one such line; <text> non-empty after stripping
+ * Contract: specs/006-citation-existence-lint/contracts/lint_citations.md.
  *
- * The path manifest (koans/path_to_enlightenment.rexx) is excluded — it is data, not a koan.
+ * Bootstrap (M2.4):
+ *   parse_index walks docs/cowlishaw_index.md once and builds a
+ *   (§sec, page) → headings lookup table. On missing/empty/malformed
+ *   index, [BOOTSTRAP] is written to stderr and the script exits 1
+ *   before any file is processed (FR-010).
  *
- * Exit 0 if every koan passes both checks; exit 1 on any failure or empty koans/.
+ * Per-file checks:
+ *   M2.2 Rule C1 anchor (per-line, unchanged): check_citation.
+ *   Station: directive (koans only, unchanged): check_station.
+ *   M2.4 existence check (new): comment-block reassembly + broad
+ *     citation-detection pattern; each citation looked up in the
+ *     table; multi-failure reporting per FR-016.
+ *
+ * The path manifest (koans/path_to_enlightenment.rexx) is excluded
+ * from file discovery — it is data, not a koan.
+ *
+ * Exit 0 iff every discovered file passes every applicable check;
+ * exit 1 on any failure, an empty corpus, or a bootstrap error.
  */
 
-listing = '/tmp/lint_citations.'RANDOM(1, 99999)'.'TIME('S')'.list'
-ADDRESS SYSTEM 'ls koans 2>/dev/null >' listing
+table. = 'UNSET'
+CALL parse_index 'docs/cowlishaw_index.md'
 
 files. = ''
 files.0 = 0
-DO WHILE LINES(listing) > 0
-  name = STRIP(LINEIN(listing))
-  IF name = '' THEN ITERATE
-  IF RIGHT(name, 5) \= '.rexx' THEN ITERATE
-  IF name = 'path_to_enlightenment.rexx' THEN ITERATE
-  files.0 = files.0 + 1
-  i = files.0
-  files.i = 'koans/'name
-END
-CALL STREAM listing, 'C', 'CLOSE'
-ADDRESS SYSTEM 'rm -f' listing
+CALL collect_files 'koans', 1
+CALL collect_files 'solutions', 0
 
 IF files.0 = 0 THEN DO
-  SAY 'koans/ is empty -- nothing to lint'
+  SAY 'koans/ and solutions/ are both empty -- nothing to lint'
   EXIT 1
 END
 
 passed = 0
 DO i = 1 TO files.0
   path = files.i
+  is_koan = (LEFT(path, 6) = 'koans/')
+
+  lines. = ''
+  lines.0 = 0
+  DO WHILE LINES(path) > 0
+    n = lines.0 + 1
+    lines.0 = n
+    lines.n = LINEIN(path)
+  END
+  CALL STREAM path, 'C', 'CLOSE'
 
   has_citation = 0
   station_count = 0
   in_leading_block = 1
-  lines_seen = 0
-  DO WHILE LINES(path) > 0
-    line = LINEIN(path)
-    lines_seen = lines_seen + 1
-
+  DO k = 1 TO lines.0
+    line = lines.k
     IF check_citation(line) THEN has_citation = 1
-
-    IF in_leading_block THEN DO
-      IF lines_seen > 50 THEN in_leading_block = 0
+    IF is_koan & in_leading_block THEN DO
+      IF k > 50 THEN in_leading_block = 0
       ELSE IF \is_comment_or_blank(line) THEN in_leading_block = 0
       ELSE IF check_station(line) THEN station_count = station_count + 1
     END
   END
-  CALL STREAM path, 'C', 'CLOSE'
+
+  para. = ''
+  para.0 = 0
+  CALL reassemble_paragraphs
+
+  unresolved. = ''
+  unresolved.0 = 0
+  DO p = 1 TO para.0
+    cit. = ''
+    cit.0 = 0
+    CALL extract_citations para.p.text
+    DO c = 1 TO cit.0
+      line_no = line_for_offset(p, cit.c.offset)
+      CALL check_existence cit.c.section, cit.c.page, cit.c.suffix, cit.c.text, line_no
+    END
+  END
 
   reasons. = ''
   reasons.0 = 0
@@ -68,15 +88,22 @@ DO i = 1 TO files.0
     j = reasons.0
     reasons.j = 'MISSING citation'
   END
-  IF station_count = 0 THEN DO
-    reasons.0 = reasons.0 + 1
-    j = reasons.0
-    reasons.j = 'MISSING Station: directive'
+  IF is_koan THEN DO
+    IF station_count = 0 THEN DO
+      reasons.0 = reasons.0 + 1
+      j = reasons.0
+      reasons.j = 'MISSING Station: directive'
+    END
+    ELSE IF station_count > 1 THEN DO
+      reasons.0 = reasons.0 + 1
+      j = reasons.0
+      reasons.j = 'MULTIPLE Station: directives'
+    END
   END
-  ELSE IF station_count > 1 THEN DO
+  DO u = 1 TO unresolved.0
     reasons.0 = reasons.0 + 1
     j = reasons.0
-    reasons.j = 'MULTIPLE Station: directives'
+    reasons.j = unresolved.u
   END
 
   IF reasons.0 = 0 THEN DO
@@ -92,10 +119,352 @@ DO i = 1 TO files.0
 END
 
 SAY ''
-SAY passed'/'files.0 'koans passed lint.'
+SAY passed'/'files.0 'files passed lint.'
 
 IF passed = files.0 THEN EXIT 0
 EXIT 1
+
+/* ============================================================
+ * Subroutines
+ * ============================================================ */
+
+parse_index: PROCEDURE EXPOSE table.
+  PARSE ARG idx_path
+
+  IF STREAM(idx_path, 'C', 'QUERY EXISTS') = '' THEN DO
+    CALL LINEOUT '/dev/stderr', '[BOOTSTRAP] cannot build lookup table: 'idx_path' is missing'
+    EXIT 1
+  END
+
+  cur_section = ''
+  pending_kind = ''
+  pending_section = ''
+  pending_heading = ''
+  line_no = 0
+  any_lines = 0
+  emdash_sep = ' ' || 'E28094'x || ' '
+
+  DO WHILE LINES(idx_path) > 0
+    line = LINEIN(idx_path)
+    line_no = line_no + 1
+    any_lines = 1
+
+    s = STRIP(line)
+
+    IF LEFT(s, 7) = '# Part ' | LEFT(s, 11) = '# Appendix ' THEN DO
+      cur_section = ''
+      pending_kind = ''
+      ITERATE
+    END
+
+    IF LEFT(s, 5) = '## §' THEN DO
+      rest = SUBSTR(s, 6)
+      sep_pos = POS(emdash_sep, rest)
+      IF sep_pos = 0 THEN DO
+        CALL LINEOUT '/dev/stderr', '[BOOTSTRAP] cannot build lookup table: 'idx_path' line 'line_no": malformed heading (expected '## §<sec> — <title>' or '### <heading>'; got '"s"')"
+        EXIT 1
+      END
+      sec = SUBSTR(rest, 1, sep_pos - 1)
+      IF \is_section(sec) THEN DO
+        CALL LINEOUT '/dev/stderr', '[BOOTSTRAP] cannot build lookup table: 'idx_path' line 'line_no": malformed heading (expected '## §<sec> — <title>' or '### <heading>'; got '"s"')"
+        EXIT 1
+      END
+      cur_section = sec
+      pending_kind = 'parent'
+      pending_section = sec
+      pending_heading = ''
+      ITERATE
+    END
+
+    IF LEFT(s, 4) = '### ' THEN DO
+      heading = SUBSTR(s, 5)
+      IF cur_section = '' THEN DO
+        CALL LINEOUT '/dev/stderr', '[BOOTSTRAP] cannot build lookup table: 'idx_path' line 'line_no": '###' child appeared without a preceding '## §X.Y' parent"
+        EXIT 1
+      END
+      pending_kind = 'child'
+      pending_section = cur_section
+      pending_heading = heading
+      ITERATE
+    END
+
+    IF LEFT(s, 11) = '- **Page:**' THEN DO
+      IF pending_kind = '' THEN ITERATE
+      page_str = STRIP(SUBSTR(s, 12))
+      IF page_str = '' | \DATATYPE(page_str, 'W') THEN DO
+        CALL LINEOUT '/dev/stderr', '[BOOTSTRAP] cannot build lookup table: 'idx_path' line 'line_no": malformed Page bullet (expected '- **Page:** <digits>'; got '"s"')"
+        EXIT 1
+      END
+      page = page_str + 0
+      sec = pending_section
+      IF table.sec.page.has_parent = 'UNSET' THEN table.sec.page.has_parent = 0
+      IF table.sec.page.0 = 'UNSET' THEN table.sec.page.0 = 0
+      IF pending_kind = 'parent' THEN
+        table.sec.page.has_parent = 1
+      ELSE DO
+        n = table.sec.page.0 + 1
+        table.sec.page.0 = n
+        table.sec.page.n = pending_heading
+      END
+      pending_kind = ''
+    END
+  END
+  CALL STREAM idx_path, 'C', 'CLOSE'
+
+  IF \any_lines THEN DO
+    CALL LINEOUT '/dev/stderr', '[BOOTSTRAP] cannot build lookup table: 'idx_path' is empty'
+    EXIT 1
+  END
+  RETURN
+
+collect_files: PROCEDURE EXPOSE files.
+  PARSE ARG dir, exclude_manifest
+  listing = '/tmp/lint_citations_'dir'.'RANDOM(1, 99999)'.'TIME('S')'.list'
+  ADDRESS SYSTEM 'ls' dir '2>/dev/null >' listing
+  DO WHILE LINES(listing) > 0
+    name = STRIP(LINEIN(listing))
+    IF name = '' THEN ITERATE
+    IF RIGHT(name, 5) \= '.rexx' THEN ITERATE
+    IF exclude_manifest & name = 'path_to_enlightenment.rexx' THEN ITERATE
+    files.0 = files.0 + 1
+    i = files.0
+    files.i = dir'/'name
+  END
+  CALL STREAM listing, 'C', 'CLOSE'
+  ADDRESS SYSTEM 'rm -f' listing
+  RETURN
+
+reassemble_paragraphs: PROCEDURE EXPOSE lines. para.
+  in_block = 0
+  cur_text = ''
+  cur_count = 0
+  cur_line. = ''
+  cur_start. = ''
+  para.0 = 0
+
+  DO k = 1 TO lines.0
+    raw = lines.k
+    sl = STRIP(raw, 'L')
+
+    IF \in_block THEN DO
+      open_pos = POS('/*', raw)
+      IF open_pos > 0 THEN DO
+        in_block = 1
+        IF POS('*/', raw, open_pos + 2) > 0 THEN in_block = 0
+        IF cur_count > 0 THEN CALL flush_para
+      END
+      ITERATE
+    END
+
+    IF POS('*/', raw) > 0 THEN DO
+      in_block = 0
+      IF cur_count > 0 THEN CALL flush_para
+      ITERATE
+    END
+
+    IF sl = '' THEN DO
+      IF cur_count > 0 THEN CALL flush_para
+      ITERATE
+    END
+
+    IF LEFT(sl, 1) = '*' THEN DO
+      after = SUBSTR(sl, 2)
+      IF STRIP(after) = '' THEN DO
+        IF cur_count > 0 THEN CALL flush_para
+        ITERATE
+      END
+      IF LEFT(after, 1) = ' ' THEN DO
+        content = SUBSTR(after, 2)
+        IF cur_count = 0 THEN DO
+          cur_text = content
+          cur_count = 1
+          cur_line.1 = k
+          cur_start.1 = 1
+        END
+        ELSE DO
+          start_pos = LENGTH(cur_text) + 2
+          cur_text = cur_text || ' ' || content
+          cur_count = cur_count + 1
+          cur_line.cur_count = k
+          cur_start.cur_count = start_pos
+        END
+        ITERATE
+      END
+      IF cur_count > 0 THEN CALL flush_para
+      ITERATE
+    END
+
+    IF cur_count > 0 THEN CALL flush_para
+  END
+  IF cur_count > 0 THEN CALL flush_para
+  RETURN
+
+flush_para:
+  fp_n = para.0 + 1
+  para.0 = fp_n
+  para.fp_n.text = cur_text
+  para.fp_n.line_count = cur_count
+  DO fp_m = 1 TO cur_count
+    para.fp_n.line.fp_m = cur_line.fp_m
+    para.fp_n.start_pos.fp_m = cur_start.fp_m
+  END
+  cur_text = ''
+  cur_count = 0
+  RETURN
+
+extract_citations: PROCEDURE EXPOSE cit.
+  /* Locals deliberately use abbreviated names (sect, pg, sfx, ct, ch, ...)
+   * because REXX would substitute a same-named local into compound-symbol
+   * tails — `cit.n.section = section` with `section` defined locally
+   * writes to cit.<n>.<value-of-section> instead of cit.<n>.SECTION.
+   */
+  PARSE ARG ptext
+  cit.0 = 0
+  marker = 'Cowlishaw §'
+  emdash_sep = ' ' || 'E28094'x || ' '
+  ml = LENGTH(marker)
+  esl = LENGTH(emdash_sep)
+  ptlen = LENGTH(ptext)
+
+  start = 1
+  DO FOREVER
+    p1 = POS(marker, ptext, start)
+    IF p1 = 0 THEN LEAVE
+    sect_start = p1 + ml
+
+    p2 = POS(', p. ', ptext, sect_start)
+    IF p2 = 0 THEN DO
+      start = p1 + ml
+      ITERATE
+    END
+    sect = SUBSTR(ptext, sect_start, p2 - sect_start)
+    IF \is_section(sect) THEN DO
+      start = p1 + ml
+      ITERATE
+    END
+
+    pg_start = p2 + 5
+    digits = 0
+    DO j = pg_start TO ptlen
+      IF \DATATYPE(SUBSTR(ptext, j, 1), 'W') THEN LEAVE
+      digits = digits + 1
+    END
+    IF digits = 0 THEN DO
+      start = p1 + ml
+      ITERATE
+    END
+    pg = SUBSTR(ptext, pg_start, digits)
+
+    after_pg = pg_start + digits
+    sfx = ''
+    cit_end = after_pg
+
+    IF SUBSTR(ptext, after_pg, esl) = emdash_sep THEN DO
+      h_start = after_pg + esl
+      end_pos = ptlen + 1
+      depth = 0
+      DO j = h_start TO ptlen
+        ch = SUBSTR(ptext, j, 1)
+        IF ch = '(' THEN DO
+          depth = depth + 1
+          ITERATE
+        END
+        IF ch = ')' THEN DO
+          IF depth = 0 THEN DO
+            end_pos = j
+            LEAVE
+          END
+          depth = depth - 1
+          ITERATE
+        END
+        IF ch = '*' THEN DO
+          IF SUBSTR(ptext, j, 2) = '*/' THEN DO
+            end_pos = j
+            LEAVE
+          END
+        END
+        IF ch = 'C' THEN DO
+          IF SUBSTR(ptext, j, ml) = marker THEN DO
+            end_pos = j
+            LEAVE
+          END
+        END
+      END
+      h_len = end_pos - h_start
+      cand = STRIP(SUBSTR(ptext, h_start, h_len))
+      IF cand \= '' THEN DO
+        sfx = cand
+        cit_end = end_pos
+      END
+    END
+
+    ct = STRIP(SUBSTR(ptext, p1, cit_end - p1), 'T')
+
+    n = cit.0 + 1
+    cit.0 = n
+    cit.n.section = sect
+    cit.n.page = pg
+    cit.n.suffix = sfx
+    cit.n.text = ct
+    cit.n.offset = p1
+
+    start = cit_end
+    IF start <= p1 THEN start = p1 + ml
+  END
+  RETURN
+
+line_for_offset: PROCEDURE EXPOSE para.
+  PARSE ARG p, offset
+  count = para.p.line_count
+  result = para.p.line.1
+  DO m = 2 TO count
+    IF para.p.start_pos.m > offset THEN LEAVE
+    result = para.p.line.m
+  END
+  RETURN result
+
+check_existence: PROCEDURE EXPOSE unresolved. table.
+  PARSE ARG section, page, suffix, citation_text, line_no
+
+  IF table.section.page.has_parent = 'UNSET' THEN DO
+    reason = 'UNRESOLVED citation: 'citation_text' (no §'section' + p. 'page' row in docs/cowlishaw_index.md)'
+    n = unresolved.0 + 1
+    unresolved.0 = n
+    unresolved.n = reason
+    RETURN
+  END
+
+  IF suffix = '' THEN RETURN
+
+  IF table.section.page.0 = 0 THEN DO
+    reason = 'UNRESOLVED citation: 'citation_text' (heading "'suffix'" does not match any §'section'+p.'page' row; use bare form)'
+    n = unresolved.0 + 1
+    unresolved.0 = n
+    unresolved.n = reason
+    RETURN
+  END
+
+  matched = 0
+  count = table.section.page.0
+  DO k = 1 TO count
+    IF table.section.page.k = suffix THEN DO
+      matched = 1
+      LEAVE
+    END
+  END
+  IF \matched THEN DO
+    csv = ''
+    DO k = 1 TO count
+      heading = table.section.page.k
+      IF k = 1 THEN csv = '"'heading'"'
+      ELSE csv = csv', "'heading'"'
+    END
+    reason = 'UNRESOLVED citation: 'citation_text' (heading "'suffix'" does not match index row 'csv')'
+    n = unresolved.0 + 1
+    unresolved.0 = n
+    unresolved.n = reason
+  END
+  RETURN
 
 is_comment_or_blank: PROCEDURE
   PARSE ARG line
@@ -113,7 +482,6 @@ check_station: PROCEDURE
   PARSE ARG line
   s = STRIP(line)
   IF s = '' THEN RETURN 0
-  /* Strip comment-prefix characters: leading *, / and spaces. */
   DO WHILE s \= ''
     c = LEFT(s, 1)
     IF c = '*' | c = '/' | c = ' ' | c = '09'x THEN s = SUBSTR(s, 2)
