@@ -60,13 +60,15 @@ For each row encountered:
   `(X.Y, N)`. If the key didn't exist, it's created with
   `[<heading>]`.
 
-After the walk, the table is:
+After the walk, two illustrative keys look like:
+
 ```
-table[(2.2, 19)] = []                          # ## §2.2 itself
-table[(2.2, 19)] = ["Literal strings", ...]    # ### children sharing (2.2, 19)
-table[(2.5, 32)] = []
-table[(2.5, 32)] = []                          # ## §2.5 itself, no children at p.32
-                                                # (in this case the bare list is the whole content)
+(2.2, 19): has_parent=1, headings=["Literal strings", ...]
+            # the §2.2 parent row sits at p.19; ### children
+            # such as "Literal strings" also sit at p.19.
+(2.5, 32): has_parent=1, headings=[]
+            # the §2.5 parent row sits at p.32; no ### children
+            # of §2.5 share this page (its children sit elsewhere).
 ```
 
 Note: a key may have an empty list (the parent §X.Y itself, no

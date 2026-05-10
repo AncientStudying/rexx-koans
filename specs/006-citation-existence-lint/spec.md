@@ -641,7 +641,7 @@ citations`, `Runner smoke`).
   M2.4 follows the same pattern: the new contract at
   `specs/006-citation-existence-lint/contracts/lint_citations.md`
   becomes the active reference; older contracts remain as
-  historical record. A clarification or planning round MAY
-  decide to amend M2.2's contract in place rather than
-  adding a successor; the spec assumes the supersession
-  pattern unless changed.
+  historical record. The supersession-vs-amend-in-place choice
+  was decided in `/speckit-plan` (see `research.md` §5):
+  supersession with a new file. The M2.2 contract is preserved
+  unchanged.

@@ -219,7 +219,7 @@ There is one state transition for the feature as a whole:
   contributor responsibility (Constitution Principle III), not
   a CI responsibility. ~22 in-prose parenthetical citations
   (M2.3) and ~28 trailing canonical citations are
-  silently-uncheckedfor §+page resolution at lint time.
+  silently unchecked for §+page resolution at lint time.
 - **After M2.4**: `bin/lint_citations` builds a (§sec, page) →
   headings lookup from `docs/cowlishaw_index.md` once at
   startup, then validates every citation in
