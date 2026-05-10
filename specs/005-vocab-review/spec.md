@@ -590,11 +590,21 @@ diff the freshly captured runner stdout against
   the feature branch's HEAD commit prior to merge.
 - **SC-006**: `tests/fixtures/runner_stdout.txt` is byte-identical
   (modulo CRLF normalization) before and after the rewrite.
-- **SC-007**: Citation lines are byte-identical pre/post: the
-  output of `grep -nE 'Cowlishaw §' koans/0?_about_*.rexx
-  solutions/0?_about_*.rexx` is the same set of (file, line,
-  text) triples after this feature as it was at the M2.2 merge
-  commit. (No M2.2 work is re-opened.)
+- **SC-007**: No pre-feature trailing citation line is modified
+  or removed by this feature. The set of `Cowlishaw §` citation
+  lines as captured at the M2.2 merge commit is preserved
+  verbatim within `koans/0?_about_*.rexx` and
+  `solutions/0?_about_*.rexx`. New in-prose parenthetical
+  Cowlishaw references introduced by the framework-vs-REXX
+  layering (per `specs/005-vocab-review/research.md` §3 and §4)
+  are *additive*: they appear as new `Cowlishaw §` lines in
+  post-feature output but do not modify any pre-feature line.
+  Mechanically: `git diff main -- koans/ solutions/ | grep -E
+  '^-.*Cowlishaw §'` returns no lines (no removed/modified
+  citations); `git diff main -- koans/ solutions/ | grep -E
+  '^\+.*Cowlishaw §'` returns only the additive in-prose
+  parentheticals from research.md §3 / §4. (No M2.2 work is
+  re-opened.)
 - **SC-008**: `docs/cowlishaw_index.md` is unmodified by this
   feature, with the narrow exception of one-row corrections
   necessitated by lookups that surface index defects (per

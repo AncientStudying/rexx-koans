@@ -184,6 +184,7 @@ corpus drift between plan and implementation.
   Expected: `assertion verb` ≥ 4; each REXX mechanism term ≥ 1. If any count is short, the corresponding concept block's layered prose was not fully applied; identify and re-apply.
 - [ ] T027 [US3] Solution-00 layering grep check: same greps against `solutions/00_about_asserts.rexx`. Expected: each term ≥ 1 (the solution's wording differs, so `assertion verb` may be lower than 4, but the REXX mechanism terms must all appear since they were applied per `research.md` §3.4).
 - [ ] T028 [US3] Pilgrim-voice preservation check: confirm `koans/00_about_asserts.rexx` file header still opens with `Welcome, pilgrim. Before you walk the path of REXX you must learn the four kinds of assertion.` (the FR-012 voice carve-out — pilgrim-voice flourishes, station taglines, and the `four kinds of assertion` framing are preserved verbatim). Run `grep -nF 'Welcome, pilgrim' koans/00_about_asserts.rexx`; expect one match.
+- [ ] T029 [US3] SC-010 reviewer walk: read `koans/00_about_asserts.rexx` cover-to-cover (file header + every concept block) and then `solutions/00_about_asserts.rexx` the same way. For each technical term in the prose, classify it as either *framework vocabulary* (the assertion verbs `eq`/`neq`/`true`/`datatype`, the umbrella term *assertion*, the per-test pass/fail mechanic, `FILL_ME_IN`) or *REXX vocabulary* (Cowlishaw-canonical: comparative operator, Logical (Boolean), DATATYPE, etc.). Confirm every term is unambiguously one or the other (no term in both classifications, no term in neither). Target: under 60 seconds per file. If any term resists classification, the layered prose in `research.md` §3 was not fully applied or contains a residual ambiguity; identify and re-apply at T013/T014. Mechanizes SC-010.
 
 **Checkpoint**: At this point, koan-00's layering is verified complete and pilgrim voice is preserved. US3 is delivered.
 
@@ -197,7 +198,7 @@ corpus drift between plan and implementation.
 
 ### Implementation for User Story 4
 
-- [ ] T029 [US4] Per-substitution parity spot check: from `quickstart.md` Step 6, run:
+- [ ] T030 [US4] Per-substitution parity spot check: from `quickstart.md` Step 6, run:
   ```sh
   for n in 00 01 02 03 04 05; do
     echo "=== ${n} ==="
@@ -206,9 +207,14 @@ corpus drift between plan and implementation.
   done
   ```
   Expected: no output for any pair. Hits indicate a substitution applied to one side of the pair but not the other; identify and re-apply.
-- [ ] T030 [US4] Citation-line read-only spot check: confirm FR-006 holds. Run `git diff main -- koans/ solutions/ | grep -E '^\+.*Cowlishaw §' | sort -u` and `git diff main -- koans/ solutions/ | grep -E '^-.*Cowlishaw §' | sort -u`. Every `+` line must be a NEW in-prose parenthetical reference (not a modified pre-feature trailing citation); every `-` line must be empty (no removed citations). If a pre-feature trailing citation line appears in the `-` output, FR-006 was violated; identify and revert.
-- [ ] T031 [US4] Push the feature branch to origin: `git push -u origin 005-vocab-review`.
-- [ ] T032 [US4] Monitor CI: confirm the GitHub Actions verify workflow reports green on both `ubuntu-latest` and `macos-latest` for all three named jobs (`verify_solutions`, `lint_citations`, `runner-smoke`). The 6/6 count satisfies Constitution Principle IV and spec SC-005.
+- [ ] T031 [US4] Citation-line read-only spot check: confirm FR-006 holds. Run `git diff main -- koans/ solutions/ | grep -E '^\+.*Cowlishaw §' | sort -u` and `git diff main -- koans/ solutions/ | grep -E '^-.*Cowlishaw §' | sort -u`. Every `+` line must be a NEW in-prose parenthetical reference (not a modified pre-feature trailing citation); every `-` line must be empty (no removed citations). If a pre-feature trailing citation line appears in the `-` output, FR-006 was violated; identify and revert. (Mechanizes SC-007.)
+- [ ] T032 [US4] SC-008 / SC-009 mechanical check: confirm `docs/cowlishaw_index.md` and `bin/lint_citations` are byte-identical between the feature branch HEAD and `main`. Run:
+  ```sh
+  git diff main -- docs/cowlishaw_index.md bin/lint_citations
+  ```
+  Expected: empty diff. If non-empty, FR-007 (index unmodified) or FR-010 (lint script unmodified) was violated; identify and revert the unintended change. Mechanizes SC-008 and SC-009.
+- [ ] T033 [US4] Push the feature branch to origin: `git push -u origin 005-vocab-review`.
+- [ ] T034 [US4] Monitor CI: confirm the GitHub Actions verify workflow reports green on both `ubuntu-latest` and `macos-latest` for all three named jobs (`verify_solutions`, `lint_citations`, `runner-smoke`). The 6/6 count satisfies Constitution Principle IV and spec SC-005.
 
 **Checkpoint**: CI gate is green. US4 is delivered. All four user-facing stories (US1, US2, US3, US4) are complete.
 
@@ -218,9 +224,9 @@ corpus drift between plan and implementation.
 
 **Purpose**: PR preparation and final review.
 
-- [ ] T033 [P] Open a pull request from `005-vocab-review` to `main` with a description that summarizes: the 22 distinct vocabulary substitutions (link to `research.md` §2), the 4 koan-00 framework-vs-REXX layered concept blocks (link to `research.md` §3), the 1 koan-01 + solution-01 targeted re-label (link to `research.md` §4), the FR-004 spec revision to per-substitution parity (link to spec.md Clarifications session 2026-05-09 third bullet), and the 5 UAT-flagged candidates closed (link to `data-model.md` UAT join table). Include a checklist confirming SC-001 through SC-010.
-- [ ] T034 [P] Run the `quickstart.md` recipe end-to-end one more time on a fresh clone (or after `git clean -fdx` on the working tree) to confirm a contributor with no local state can reproduce the green build. Note any quickstart-doc improvements needed. (Steps 1+2+3+4+5+6 mechanically exercised in T017/T018/T019/T020/T026/T029.)
-- [ ] T035 Final review pass: re-read `spec.md` Out of Scope and Assumptions sections; confirm no item has been silently violated. Specifically: index unmodified (FR-007, SC-008), runner fixture unchanged (FR-008, SC-006), no Stage II–VI files touched, no `bin/lint_citations` change (FR-010, SC-009), no `lib/meditation.rexx` change (FR-011), no pre-feature trailing citation lines modified (FR-006), no PDF-posture changes, no FR-014 (M2.2 deferred lint extension) work landed, voice prose preserved (FR-012, T028).
+- [ ] T035 [P] Open a pull request from `005-vocab-review` to `main` with a description that summarizes: the 22 distinct vocabulary substitutions (link to `research.md` §2), the 4 koan-00 framework-vs-REXX layered concept blocks (link to `research.md` §3), the 1 koan-01 + solution-01 targeted re-label (link to `research.md` §4), the FR-004 spec revision to per-substitution parity (link to spec.md Clarifications session 2026-05-09 third bullet), and the 5 UAT-flagged candidates closed (link to `data-model.md` UAT join table). Include a checklist confirming SC-001 through SC-010.
+- [ ] T036 [P] Run the `quickstart.md` recipe end-to-end one more time on a fresh clone (or after `git clean -fdx` on the working tree) to confirm a contributor with no local state can reproduce the green build. Note any quickstart-doc improvements needed. (Steps 1+2+3+4+5+6 mechanically exercised in T017/T018/T019/T020/T026/T030.)
+- [ ] T037 Final review pass: re-read `spec.md` Out of Scope and Assumptions sections; confirm no item has been silently violated. Specifically: index unmodified (FR-007, SC-008), runner fixture unchanged (FR-008, SC-006), no Stage II–VI files touched, no `bin/lint_citations` change (FR-010, SC-009), no `lib/meditation.rexx` change (FR-011), no pre-feature trailing citation lines modified (FR-006), no PDF-posture changes, no FR-014 (M2.2 deferred lint extension) work landed, voice prose preserved (FR-012, T028).
 
 ---
 
@@ -232,9 +238,9 @@ corpus drift between plan and implementation.
 - **Foundational (Phase 2)**: Empty for M2.3.
 - **User Story 1 (Phase 3)**: Depends on Setup (T001–T007 baseline preconditions). Within Phase 3: T008–T012 (per-pair bulk substitutions) can run in parallel; T013–T016 (koan 00 layering + koan 01 re-label) can run in parallel with T008–T012 since they edit different files (or the same file in different blocks — see "Within Each User Story" below); T017–T020 (verification) are sequential follow-ups within the phase.
 - **User Story 2 (Phase 4)**: Depends on Phase 3 completion (UAT closure is a property of the rewrites). T021–T025 are read-only verifications; can run in parallel.
-- **User Story 3 (Phase 5)**: Depends on Phase 3 completion. T026–T028 are read-only verifications; can run in parallel. May run in parallel with Phase 4 (US2 and US3 are independent verifications).
-- **User Story 4 (Phase 6)**: Depends on Phase 3 completion. T029, T030 (local spot checks) can begin once Phase 3 is done; T031–T032 (push + monitor) are sequential.
-- **Polish (Phase 7)**: Depends on Phase 6. T033 and T034 [P] independent of each other; T035 is the final review.
+- **User Story 3 (Phase 5)**: Depends on Phase 3 completion. T026–T028 are read-only grep checks; T029 is a manual reviewer cover-to-cover walk for SC-010. All parallelizable. May run in parallel with Phase 4 (US2 and US3 are independent verifications).
+- **User Story 4 (Phase 6)**: Depends on Phase 3 completion. T030, T031, T032 (local spot checks: per-substitution parity, citation read-only, index/lint git-diff) can begin once Phase 3 is done and run in parallel; T033–T034 (push + monitor) are sequential.
+- **Polish (Phase 7)**: Depends on Phase 6. T035 and T036 [P] independent of each other; T037 is the final review.
 
 ### User Story Dependencies
 
@@ -250,16 +256,16 @@ corpus drift between plan and implementation.
   - T015 edits koan 01's *numbers* concept block; T008 edits koan 01's *single quotes* concept block (different blocks, no conflict). T016 edits solution 01's numbers block; no other task edits solution 01.
   After T008–T016 complete, T017 (lint), T018 (verify_solutions), T019 (runner-smoke fixture diff), T020 (substitution-table greps) run sequentially.
 - US2 (Phase 4): T021–T025 independent verifications; parallelizable.
-- US3 (Phase 5): T026, T027, T028 independent grep checks; parallelizable.
-- US4 (Phase 6): T029 (parity spot check) and T030 (citation read-only spot check) parallelizable; T031 (push) → T032 (monitor CI) strict order.
+- US3 (Phase 5): T026, T027, T028 independent grep checks plus T029 manual reviewer walk; all parallelizable.
+- US4 (Phase 6): T030 (parity spot check), T031 (citation read-only spot check), and T032 (index/lint git-diff) all parallelizable; T033 (push) → T034 (monitor CI) strict order.
 
 ### Parallel Opportunities
 
 - All Phase 1 tasks (T001–T007) can run in parallel.
 - All Phase 3 per-pair edits (T008–T016) can run in parallel — each edits its own (koan, solution) pair or its own concept block within a file, no overlap.
 - Phases 4 and 5 (US2 spot checks and US3 spot checks) can run in parallel after Phase 3 completes.
-- T029, T030 in Phase 6 can run in parallel.
-- T033, T034 in Polish can run in parallel.
+- T030, T031, T032 in Phase 6 can run in parallel.
+- T035, T036 in Polish can run in parallel.
 
 ---
 
