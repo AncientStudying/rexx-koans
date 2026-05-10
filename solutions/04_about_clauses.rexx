@@ -17,7 +17,7 @@ n = 0
  * Cowlishaw §2.4, p. 31
  */
 a = 1; b = 2
-n = n + 1; CALL m 'eq', 3, a + b, n
+CALL m 'eq', 3, a + b
 
 /* Concept: continuation.
  * A continuation character (a comma) at the end of a line continues
@@ -28,7 +28,7 @@ n = n + 1; CALL m 'eq', 3, a + b, n
  */
 total = ,
         10 + 20
-n = n + 1; CALL m 'eq', 30, total, n
+CALL m 'eq', 30, total
 
 /* Concept: comments.
  * A REXX comment opens with `/*` and closes with `*/`.
@@ -40,11 +40,12 @@ n = n + 1; CALL m 'eq', 30, total, n
  * Cowlishaw §2.2, p. 18 — Comments
  */
 greeting = 'hello' /* a trailing comment */
-n = n + 1; CALL m 'eq', 'hello', greeting, n
+CALL m 'eq', 'hello', greeting
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'solutions/04_about_clauses.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'solutions/04_about_clauses.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN

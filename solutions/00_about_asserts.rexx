@@ -22,8 +22,8 @@ n = 0
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'eq', '4', 2 + 2, n
-n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
+CALL m 'eq', '4', 2 + 2
+CALL m 'eq', 'pilgrim', 'pilgrim'
 
 /* Concept: difference.
  * The 'neq' kind passes when its two values do NOT match. It is the
@@ -32,7 +32,7 @@ n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
+CALL m 'neq', 'pilgrim', 'wanderer'
 
 /* Concept: truth.
  * The 'true' kind passes when its first argument evaluates to the
@@ -44,8 +44,8 @@ n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
  *
  * Cowlishaw §2.3, p. 26
  */
-n = n + 1; CALL m 'true', (1 = 1), '', n
-n = n + 1; CALL m 'true', (5 > 3), '', n
+CALL m 'true', (1 = 1), ''
+CALL m 'true', (5 > 3), ''
 
 /* Concept: type.
  * The 'datatype' kind passes when the value's REXX type matches the
@@ -54,12 +54,13 @@ n = n + 1; CALL m 'true', (5 > 3), '', n
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'datatype', 5, 'W', n
-n = n + 1; CALL m 'datatype', 'pilgrim', 'A', n
+CALL m 'datatype', 5, 'W'
+CALL m 'datatype', 'pilgrim', 'A'
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'solutions/00_about_asserts.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'solutions/00_about_asserts.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN

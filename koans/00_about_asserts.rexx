@@ -30,8 +30,8 @@ n = 0
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'eq', FILL_ME_IN, 2 + 2, n
-n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
+CALL m 'eq', FILL_ME_IN, 2 + 2
+CALL m 'eq', 'pilgrim', 'pilgrim'
 
 /* Concept: difference.
  * The `neq` assertion verb is the framework's mirror of `eq`: it
@@ -43,7 +43,7 @@ n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
+CALL m 'neq', 'pilgrim', 'wanderer'
 
 /* Concept: truth.
  * The `true` assertion verb passes when its first argument
@@ -59,8 +59,8 @@ n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
  *
  * Cowlishaw §2.3, p. 26
  */
-n = n + 1; CALL m 'true', (1 = 1), '', n
-n = n + 1; CALL m 'true', (5 > 3), '', n
+CALL m 'true', (1 = 1), ''
+CALL m 'true', (5 > 3), ''
 
 /* Concept: type.
  * The `datatype` assertion verb passes when the value's REXX type
@@ -76,12 +76,13 @@ n = n + 1; CALL m 'true', (5 > 3), '', n
  *
  * Cowlishaw §2.5, p. 32
  */
-n = n + 1; CALL m 'datatype', 5, FILL_ME_IN, n
-n = n + 1; CALL m 'datatype', 'pilgrim', 'A', n
+CALL m 'datatype', 5, FILL_ME_IN
+CALL m 'datatype', 'pilgrim', 'A'
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/00_about_asserts.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/00_about_asserts.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN

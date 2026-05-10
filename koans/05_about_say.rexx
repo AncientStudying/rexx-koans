@@ -25,7 +25,7 @@ n = 0
  */
 greeting = 'pilgrim'
 message = 'Hello,' greeting
-n = n + 1; CALL m 'eq', FILL_ME_IN, message, n
+CALL m 'eq', FILL_ME_IN, message
 
 /* Concept: the blank operator in SAY context.
  * SAY's argument is one expression -- the same kind any other clause
@@ -38,7 +38,7 @@ n = n + 1; CALL m 'eq', FILL_ME_IN, message, n
 left = 'one'
 right = 'two'
 together = left right
-n = n + 1; CALL m 'eq', 'one two', together, n
+CALL m 'eq', 'one two', together
 
 /* Concept: an empty SAY emits a blank line.
  * SAY with no expression is shorthand for SAY ''. The null string
@@ -47,12 +47,13 @@ n = n + 1; CALL m 'eq', 'one two', together, n
  * Cowlishaw §2.7, p. 70
  */
 empty = ''
-n = n + 1; CALL m 'eq', '', empty, n
-n = n + 1; CALL m 'eq', 0, LENGTH(empty), n
+CALL m 'eq', '', empty
+CALL m 'eq', 0, LENGTH(empty)
 
 EXIT 0
 
-m: PARSE ARG kind, arg1, arg2, num
-   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/05_about_say.rexx', num, SIGL
+m: PARSE ARG kind, arg1, arg2
+   n = n + 1
+   CALL 'lib/meditation.rexx' kind, arg1, arg2, 'koans/05_about_say.rexx', n, SIGL
    IF RESULT \= 0 THEN EXIT RESULT
    RETURN
