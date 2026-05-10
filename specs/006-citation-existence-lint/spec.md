@@ -38,6 +38,14 @@ deferral). Depends on M2.1 (the index is the join target) and M2.2
 of). Independent of M2.3 (M2.3 edited teaching prose; M2.4 edits
 the lint script and its contract — disjoint surfaces).
 
+## Clarifications
+
+### Session 2026-05-10
+
+- Q: M2.3 introduced in-prose parenthetical citations like `(Cowlishaw §2.3, p. 26)` inside teaching-prose lines. These do NOT pass M2.2's strict canonical-form check (Rule C1's tail-check rejects the trailing `)` and following prose) — they're currently invisible to `bin/lint_citations`. Should M2.4's mechanical existence check validate them? → A: Broad — validate both. M2.4 introduces a second, more permissive citation-detection pattern (substring `Cowlishaw §<sec>, p. <page>` optionally followed by ` — <heading>`, with no tail constraint) used ONLY for the existence-check phase. M2.2's strict Rule C1 stays unchanged for the canonical-form / "is there an anchor" check. Every citation a contributor writes — trailing canonical AND in-prose parenthetical — is mechanically guarded against typos.
+- Q: Should `bin/lint_citations` extend its file-scope to also scan `solutions/*.rexx` (where the existence check applies), or stay koans-only? → A: Extend to solutions. Lint scans both `koans/*.rexx` and `solutions/*.rexx`; the existence check applies to citations in either tree. The Station: directive check stays koans-only (solutions don't carry Station: directives by convention). Output expands from 6 to 12 per-file lines plus the summary. Matches PLAN.md §M2.4 literal language and catches solution-side citation typos directly rather than relying on the M2.3 per-substitution-parity grep alone.
+- Q: When a single file contains multiple unresolved citations, how should `bin/lint_citations` report them? → A: Report all. For each file with unresolved citations, emit `[FAIL] <file>` once, then one `UNRESOLVED citation: <text> (...)` reason line per offending citation in source order. A contributor fixes all typos in one pass rather than lint-fix-lint round-tripping. Matches the M2.2 contract's per-failure-mode pattern (one reason per failure).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Mechanical existence enforcement at lint time (Priority: P1) 🎯 MVP
@@ -101,6 +109,12 @@ required.
    citation (the bare form passes when ANY matching row exists;
    the suffix is OPTIONAL disambiguation per the index
    conventions in `docs/cowlishaw_index.md`).
+5. **Given** a single file with multiple unresolved citations
+   (e.g., two fabricated §+page typos in different concept
+   blocks), **When** `bin/lint_citations` runs, **Then** the
+   script prints `[FAIL] <file>` exactly once followed by one
+   `UNRESOLVED citation: ...` reason line per offending
+   citation in source order, and exits non-zero (per FR-016).
 
 ---
 
@@ -245,10 +259,22 @@ citations`, `Runner smoke`).
   has no `###` children at all).
 - **Citation appears in an in-prose parenthetical** (M2.3
   added these — e.g., `(Cowlishaw §2.3, p. 26)`) rather than
-  on its own line: covered by the same rule. The M2.2
-  canonical-form check is per-substring (it scans every line
-  for a citation marker); the M2.4 existence check inherits
-  the same per-substring scope.
+  on its own line: validated by the M2.4 existence check, per
+  the Clarifications session 2026-05-10 (broad detection
+  scope). M2.2's strict Rule C1 still rejects the line as a
+  canonical-anchor candidate (because of the trailing `)` and
+  prose), but M2.4's separate, more permissive
+  citation-detection pattern picks up the substring and joins
+  it against the index. A typo in an in-prose parenthetical
+  (e.g., `(Cowlishaw §99.99, p. 999)`) surfaces as
+  `UNRESOLVED citation: ...` even though M2.2 would have
+  silently ignored it.
+- **Single file contains multiple unresolved citations**:
+  per FR-016, lint emits `[FAIL] <file>` once and one
+  `UNRESOLVED citation: ...` reason line per offending
+  citation in source order. A contributor with three typos
+  in three concept blocks gets three reason lines and can
+  fix all in one pass.
 - **A koan or solution file contains zero citations**: the
   pre-existing `MISSING citation` failure mode applies
   (unchanged from M2.2). The existence check has no work to
@@ -278,11 +304,20 @@ citations`, `Runner smoke`).
   (verbatim, including case and punctuation) that share that
   key, plus an indication of whether the parent `## §<sec>`
   row itself has that key.
-- **FR-002**: For every citation matched by Rule C1 (the M2.2
-  canonical-form check) in any file scanned by lint,
-  `bin/lint_citations` MUST extract the (§<sec>, <page>) key
-  and the optional suffix-heading and validate against the
-  lookup table.
+- **FR-002**: For every citation occurrence in any file scanned
+  by lint, `bin/lint_citations` MUST extract the (§<sec>, <page>)
+  key and the optional ` — <heading>` suffix, and validate
+  against the lookup table. The citation-detection pattern for
+  the existence check is a more permissive substring match than
+  M2.2's Rule C1 (per the Clarifications session 2026-05-10
+  resolution): it matches `Cowlishaw §<sec>, p. <page>`
+  optionally followed by ` — <heading>` (canonical em-dash
+  separator, non-empty heading), with NO tail constraint after
+  the page digits or heading. This permits in-prose parenthetical
+  citations (e.g., `(Cowlishaw §2.3, p. 26)`) and other
+  embedded forms to be validated. M2.2's strict Rule C1 carries
+  forward UNCHANGED for the canonical-form / "is there an anchor
+  citation in this file" check (FR-007).
 - **FR-003**: A citation with a (§<sec>, <page>) key that does
   not appear in the lookup table MUST be rejected with the new
   failure mode `UNRESOLVED citation: <citation text>
@@ -358,6 +393,14 @@ citations`, `Runner smoke`).
   introduction is reverted before commit. Mechanically:
   `git diff main -- koans/ solutions/` returns no output on
   the feature branch's HEAD prior to merge.
+- **FR-016**: When a single scanned file contains multiple
+  unresolved citations, `bin/lint_citations` MUST emit
+  `[FAIL] <file>` once and then one `UNRESOLVED citation:
+  <text> (<reason>)` reason line per offending citation in
+  source order (line-number ascending; if multiple unresolved
+  citations share a line, in column order). The file is
+  reported once; the reasons accumulate underneath. Per the
+  Clarifications session 2026-05-10 resolution.
 
 ### Key Entities
 
@@ -379,13 +422,19 @@ citations`, `Runner smoke`).
   any `###` child still resolve. A key may point to multiple
   headings (when (§X.Y, page) is shared by a §X.Y row and a
   `###` child, or by two `###` children).
-- **Citation**: a substring matching M2.2's canonical Rule C1
-  in any line of `koans/*.rexx` or `solutions/*.rexx`. Bare
-  form `Cowlishaw §<sec>, p. <page>` or suffixed form
-  `Cowlishaw §<sec>, p. <page> — <heading>`. The unit of join.
-  After M2.3 there are also in-prose parenthetical citations
-  like `(Cowlishaw §2.3, p. 26)` — these match the same
-  Rule C1 substring scan.
+- **Citation** (M2.4 detection scope, per Clarifications session
+  2026-05-10): a substring matching `Cowlishaw §<sec>, p. <page>`
+  optionally followed by ` — <heading>` (canonical em-dash
+  separator, non-empty heading) in any line of `koans/*.rexx` or
+  `solutions/*.rexx`. NO tail constraint applies — the substring
+  may be embedded in prose, parentheticals, or any other context.
+  This is broader than M2.2's Rule C1 (which requires a clean
+  tail) but the broader scope applies ONLY to the M2.4 existence
+  check; M2.2's Rule C1 still gates the canonical-form / anchor
+  check unchanged. The unit of join. Trailing canonical citation
+  lines (e.g., `* Cowlishaw §2.5, p. 32`) and in-prose
+  parentheticals (e.g., `(Cowlishaw §2.3, p. 26)`) are both
+  validated.
 - **Failure mode**: a one-line indented reason string emitted
   under a `[FAIL] <file>` line. M2.4 introduces:
   - `UNRESOLVED citation: <text> (no §<sec> + p. <page> row
@@ -484,10 +533,18 @@ citations`, `Runner smoke`).
   same existence check as trailing canonical citations.
 - **The lint scope is extended to `solutions/*.rexx`** in
   addition to `koans/*.rexx` for the citation-checking pass,
-  per PLAN.md §M2.4's literal language ("for every citation
-  it finds in `koans/*.rexx` and `solutions/*.rexx`"). The
-  Station: directive check is **not** extended to solutions
-  (solutions do not carry Station: directives by convention).
+  per PLAN.md §M2.4's literal language and confirmed in the
+  Clarifications session 2026-05-10. The Station: directive
+  check is **not** extended to solutions (solutions do not
+  carry Station: directives by convention).
+- **The M2.4 existence check uses a more permissive
+  citation-detection pattern than M2.2's Rule C1** (per the
+  Clarifications session 2026-05-10): substring `Cowlishaw
+  §<sec>, p. <page>` optionally followed by ` — <heading>`
+  with no tail constraint. This permits in-prose
+  parenthetical citations to be validated. M2.2's strict
+  Rule C1 carries forward unchanged for the canonical-form
+  / "is there an anchor citation" check (FR-007).
 - **`bin/lint_citations` runs in well under 1 second on the
   current corpus** (12 files, ~50 citations, ~80 index rows).
   Performance is not a constraint at this scale; no caching
