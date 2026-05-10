@@ -1,5 +1,5 @@
 # REXX Koans — Agent Context
 
 <!-- SPECKIT START -->
-Active feature plan: specs/007-koan-line-shape/plan.md
+Active feature plan: specs/008-m3-the-path/plan.md
 <!-- SPECKIT END -->
