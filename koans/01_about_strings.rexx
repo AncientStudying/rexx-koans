@@ -13,7 +13,7 @@
 n = 0
 
 /* Concept: single quotes and double quotes both make literal strings.
- * REXX has no separate character literal. 'pilgrim' and "pilgrim"
+ * REXX has no separate character type. 'pilgrim' and "pilgrim"
  * denote the same value -- they are equal under both = and ==.
  *
  * Cowlishaw §2.2, p. 19 — Literal strings
@@ -32,9 +32,11 @@ n = n + 1; CALL m 'eq', 0, LENGTH(''), n
 
 /* Concept: numbers are strings.
  * Everything in REXX is a string. A number is a string the
- * interpreter recognises as numeric. The 'datatype' kind with code
- * 'N' (number) accepts numeric strings. The pilgrim fills in the
- * type code that declares '42' a number.
+ * interpreter recognises as numeric. The framework's `datatype`
+ * assertion verb passes when DATATYPE (the REXX built-in,
+ * Cowlishaw §2.9, p. 91) returns true for the named type — code
+ * 'N' (Number) accepts numeric strings. The pilgrim fills in the
+ * type code that declares '42' a Number.
  *
  * Cowlishaw §2.3, p. 27 — Numbers
  */

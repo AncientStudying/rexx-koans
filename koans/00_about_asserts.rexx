@@ -17,12 +17,16 @@
 n = 0
 
 /* Concept: equality.
- * The first kind of assertion is 'eq'. It passes when its two values
- * match. The first argument is the value the koan expects; the
- * second is the value the koan computes. They are compared as REXX
- * strings, with numeric coercion when both look like numbers.
+ * The first assertion verb is `eq`. The koan framework defines `eq`
+ * to pass when its two arguments compare equal — the first argument
+ * is the value the koan expects, the second the value the koan
+ * computes.
  *
- * The expression  2 + 2  produces the string for the obvious sum.
+ * The REXX mechanism `eq` exercises is the `=` comparative operator
+ * (Cowlishaw §2.3, p. 26): a normal comparison that performs a
+ * numeric comparison when both terms are numeric and otherwise
+ * pads and compares them as strings. The expression  2 + 2  is
+ * arithmetic and produces the numeric string for the obvious sum.
  *
  * Cowlishaw §2.5, p. 32
  */
@@ -30,17 +34,28 @@ n = n + 1; CALL m 'eq', FILL_ME_IN, 2 + 2, n
 n = n + 1; CALL m 'eq', 'pilgrim', 'pilgrim', n
 
 /* Concept: difference.
- * The 'neq' kind passes when its two values do NOT match. Here the
- * koan asserts that two distinct names are unequal.
+ * The `neq` assertion verb is the framework's mirror of `eq`: it
+ * passes when its two values do NOT match. Here the koan asserts
+ * that two distinct names are unequal.
+ *
+ * The REXX mechanism `neq` exercises is the `\=` comparative
+ * operator (Cowlishaw §2.3, p. 26) — the negation of `=`.
  *
  * Cowlishaw §2.5, p. 32
  */
 n = n + 1; CALL m 'neq', 'pilgrim', 'wanderer', n
 
 /* Concept: truth.
- * The 'true' kind passes when its first argument evaluates to the
- * REXX boolean 1. Comparisons such as 1 = 1 and 5 > 3 produce the
- * string '1' on success. The second argument is unused for 'true'.
+ * The `true` assertion verb passes when its first argument
+ * evaluates to the Logical (Boolean) value '1'. The framework
+ * uses '0' and '1' as its pass/fail signal because that is what
+ * REXX's comparative and logical operators return.
+ *
+ * The REXX mechanism: comparative operators such as `=` and `>`
+ * (Cowlishaw §2.3, p. 26) return the Logical (Boolean) values
+ * '0' and '1' (Cowlishaw §2.3, p. 27 — Logical (Boolean)) on
+ * success and failure respectively. The second argument is
+ * unused for `true`.
  *
  * Cowlishaw §2.3, p. 26
  */
@@ -48,10 +63,16 @@ n = n + 1; CALL m 'true', (1 = 1), '', n
 n = n + 1; CALL m 'true', (5 > 3), '', n
 
 /* Concept: type.
- * The 'datatype' kind passes when the value's REXX type matches the
- * type code given. Common codes: W for whole number, N for any
- * number, A for alphanumeric. The pilgrim fills in the code that
- * declares 5 a whole number.
+ * The `datatype` assertion verb passes when the value's REXX type
+ * matches the type code given. The framework's verb name borrows
+ * from the REXX built-in.
+ *
+ * The REXX mechanism is the DATATYPE built-in function
+ * (Cowlishaw §2.9, p. 91): with a type code as its second
+ * argument it returns '1' or '0' according to whether the first
+ * argument matches the named type. Common codes: W for Whole, N
+ * for Number, A for Alphanumeric. The pilgrim fills in the code
+ * that declares 5 a Whole.
  *
  * Cowlishaw §2.5, p. 32
  */

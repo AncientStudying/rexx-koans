@@ -1,8 +1,17 @@
 # REXX Koans — Project Plan
 
-**Version:** 1.2  
+**Version:** 1.3  
 **Status:** Locked  
-**Locked on:** 2026-05-08
+**Locked on:** 2026-05-09
+
+*Changes since v1.2: Inserted M2.4 (Mechanical Citation Existence
+Check) between M2.3 and M3 to implement the lint extension deferred
+from M2.2 (FR-014 / US5; see
+`specs/004-m2-2-citation-rewrite/spec.md`). M2.4 closes the loop
+between `bin/lint_citations` and `docs/cowlishaw_index.md` so that
+contributor-introduced citations in M3+ are validated against the
+index at lint time rather than only at audit time. May run in
+parallel with M2.3. No top-level milestone numbers were renumbered.*
 
 *Changes since v1.1: Inserted three remediation sub-milestones
 M2.1–M2.3 between M2 and M3, in response to the M2 UAT audit
@@ -509,6 +518,59 @@ Acceptance:
 - Runner stdout fixture unchanged.
 
 May run in parallel with M2.2; both depend on M2.1.
+
+**M2.4 — Mechanical Citation Existence Check.** Extend
+`bin/lint_citations` to validate, for every citation it finds in
+`koans/*.rexx` and `solutions/*.rexx`, that the cited (§N.N, book
+page) pair (and the trailing child-heading when the canonical suffix
+is present) corresponds to an existing row in
+`docs/cowlishaw_index.md`. This goes beyond M2.2's canonical-form
+check (which is syntactic only) by closing the loop with the index:
+a contributor in M3+ who invents a citation that does not resolve
+against the index is rejected at lint time rather than at audit time.
+
+Procedure:
+
+1. Author a small index-row parser inside `bin/lint_citations`
+   that reads `docs/cowlishaw_index.md`, walks `##` and `###`
+   heading rows, and emits a lookup table keyed by (§N.N, book
+   page) with the verbatim child-heading text as value.
+2. Tighten `check_citation` (the canonical-form check from M2.2)
+   to perform the join: after parsing the prefix
+   `Cowlishaw §<sec>, p. <page>` and the optional ` — <heading>`
+   suffix, look up the (§<sec>, <page>) key and reject if absent;
+   if the suffix is present, also reject when the suffix text
+   does not match the index row's child heading verbatim.
+3. Update the lint contract under M2.4's spec directory to
+   document the new join behavior, including the rejection
+   table.
+4. Negative spot-check: introduce a fabricated citation
+   (`Cowlishaw §99.99, p. 999`) into a sandbox koan; confirm
+   lint rejects it with a citation-resolves-to-no-row error;
+   revert.
+
+Acceptance:
+
+- Every citation in `koans/` and `solutions/` resolves against
+  `docs/cowlishaw_index.md` (already true after M2.2; M2.4 adds
+  mechanical enforcement so it stays true).
+- `verify_solutions` and `lint_citations` are 6/6 green.
+- Runner stdout fixture unchanged.
+- A negative spot-check (a fabricated citation) is rejected at
+  lint time with a specific, actionable message.
+
+Motivation: M2.2 deferred this work (FR-014 / US5) per its
+Clarifications session 2026-05-09 to keep the citation-rewrite
+blast radius small. The deferral was correct for M2.2; the
+extension itself remains valuable as a forward guard for M3+
+where new koans introduce new citations whose only check today is
+human review. M2.4 implements the guard.
+
+Depends on M2.1 (the index is the join target) and M2.2 (the
+canonical-form check is the foundation the join sits on top of).
+May run in parallel with M2.3 — they edit disjoint surfaces (the
+lint script vs koan teaching prose) and each only depends on
+M2.1 + M2.2.
 
 **M3 — The Path.** Stages II and III koans (06–17) with matching
 solutions. Scripture mechanic implemented and exercised by at least
