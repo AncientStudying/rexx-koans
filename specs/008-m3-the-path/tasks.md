@@ -32,10 +32,10 @@
 
 **⚠️ CRITICAL**: No user story work in US1/US2/US3 can land scripture bindings or probe scripture emission until this phase completes.
 
-- [ ] T003 [P] Author `lib/scripture.rexx` per `contracts/scripture_library.md`: one-verb dispatcher (`CALL 'lib/scripture.rexx' 'fetch', key`), seven keys `humans_not_machines` / `least_astonishment` / `everything_is_string` / `read_aloud` / `consistency` / `whitespace_matters_just_enough` / `numbers_are_strings_too` (FR-010, research.md §2 working table), TAB-separated `<principle>'09'x<citation>` return, empty string on unknown key, Regina built-ins only (Constitution Principle II)
+- [ ] T003 [P] Author `lib/scripture.rexx` per `contracts/scripture_library.md`: one-verb dispatcher (`CALL 'lib/scripture.rexx' 'fetch', key`), seven keys `humans_not_machines` / `least_astonishment` / `everything_is_string` / `read_aloud` / `consistency` / `whitespace_matters_just_enough` / `numbers_are_strings_too` (FR-010, research.md §2 working table), TAB-separated `<principle>'09'x<citation>` return, empty string on unknown key, Regina built-ins only (Constitution Principle II). **Citation hygiene**: before commit, manually resolve each of the seven scripture-library citations against `docs/cowlishaw_index.md`. The working rows are listed in research.md §2 (§1.3 p. 5; §1.4 p. 7; §2.3 p. 25; §2.11 p. 137); research flags `§2.11, p. 137` for `numbers_are_strings_too` as needing fresh verification — locate the actual `**Page:**` row for arithmetic-precision content under §2.11 and update the citation if it does not match. Record the resolved index row reference in a comment beside each scripture entry. Note that `bin/lint_citations` does NOT scan `lib/scripture.rexx` (M2.4 scope is `koans/`/`solutions/` only) — this manual verification is the only citation gate for scripture-library entries.
 - [ ] T004 Sanity-check `lib/scripture.rexx` via `regina -e "CALL 'lib/scripture.rexx' 'fetch', 'least_astonishment'; SAY RESULT"` (expect principle TAB citation) and `regina -e "CALL 'lib/scripture.rexx' 'fetch', 'unknown_key'; SAY RESULT"` (expect empty); confirms quickstart Probe 9
 - [ ] T005 Extend `lib/pilgrimage.rexx` with `scripture_for_failure: PROCEDURE` implementing the FR-024 block-scoped backward scan per research.md §1 sketch: load koan source into `lines.` stem, walk from `fail_line − 1` to 1, halt on first `Scripture: <key>` line (after stripping leading `*`) or first `/*` line; return the key on directive hit, empty string on `/*` hit or scan exhaustion
-- [ ] T006 Wire the emission point in `lib/pilgrimage.rexx` between the captured failed-koan stdout (current location around `lib/pilgrimage.rexx:96–101` per data-model.md "Implementation notes") and the station-list `CALL`. On non-empty key from T005: `CALL 'lib/scripture.rexx' 'fetch', key`, split RESULT on `'09'x`, emit the FR-012 two-line block — line 1 `From the Bathonian (<citation>):`, line 2 principle indented two spaces, no surrounding blank lines, no trailing punctuation
+- [ ] T006 Wire the emission point in `lib/pilgrimage.rexx` between the captured failed-koan stdout (current location around `lib/pilgrimage.rexx:96–101` per data-model.md "Implementation notes") and the station-list `CALL`. Three sub-steps: **(a)** Parse the captured `failed_output` line-by-line for the `Damaged at: <file>, line N` diagnostic emitted by `lib/meditation.rexx` and extract `N` as `fail_line`. If the diagnostic line is absent (the koan aborted with a SYNTAX condition before any meditation diagnostic, per contracts/runner.md §"Scripture-emission pass" emit-decision table row 4), skip the scripture pass entirely and emit nothing. **(b)** Call `scripture_for_failure(koan_path, fail_line)` from T005; if it returns the empty string, emit nothing. **(c)** On a non-empty key returned by T005: `CALL 'lib/scripture.rexx' 'fetch', key`, split `RESULT` on `'09'x` into `(principle, citation)`. If `RESULT` is the empty string (unknown key fallback), emit nothing. Otherwise emit the FR-012 two-line block — line 1 `From the Bathonian (<citation>):`, line 2 principle indented two spaces, no surrounding blank lines, no trailing punctuation.
 - [ ] T007 Confirm non-scripture-bound failure path is byte-identical to M2: introduce a deliberate wrong fill in any Stage I koan (e.g., `koans/00_about_asserts.rexx`), capture `bin/pilgrimage` stdout, diff against pre-T005 stdout — must be empty (Stage I files have no `Scripture:` directives so the new scan returns empty and emits nothing). Revert the wrong fill.
 
 **Checkpoint**: Scripture library and runner emission pass are ready; US1, US2, US3 can begin.
@@ -44,13 +44,13 @@
 
 ## Phase 3: US1 — Pilgrim walks Stage II (control flow) (Priority: P1) 🎯 MVP
 
-**Goal**: Six new Stage II koans (06–11) with matching solutions, authored in M2.5 cleaned shape, teaching IF/SELECT/DO/ITERATE+LEAVE/SIGNAL/INTERPRET from Cowlishaw §2.7. Koan 07 binds `Scripture: least_astonishment`.
+**Goal**: Six new Stage II koans (06–11) with matching solutions, authored in M2.5 cleaned shape, teaching IF/SELECT/DO/ITERATE+LEAVE/SIGNAL/INTERPRET from Cowlishaw §2.7. Koan 07 binds `Scripture: least_astonishment`. Every koan and its matching solution carry at least three teaching comment blocks and at least four assertions (SC-011 floor; applies to every solution-authoring task in this phase, not only T008).
 
 **Independent Test**: Apply solutions 06–11 to their matching koans on a fresh checkout, run `bin/pilgrimage` — runner advances through stations 00–11 without error, stops at the first blank in `koans/12_about_string_functions.rexx`. Per-koan: solve N → runner stops at N+1.
 
 Solutions first (Constitution Principle I — Solution-First Development; all different files, parallel):
 
-- [ ] T008 [P] [US1] Write `solutions/06_about_if.rexx` teaching IF/THEN/ELSE per Cowlishaw §2.7 (locate exact page in `docs/cowlishaw_index.md`); M2.5 cleaned shape (single `n = 0` at top, three-arg `m:` wrapper at foot passing path + `n` + `SIGL` to `lib/meditation.rexx`); station subtitle "At the Branch of the Road" (PLAN §11); ≥3 teaching blocks, ≥4 assertions (SC-011)
+- [ ] T008 [P] [US1] Write `solutions/06_about_if.rexx` teaching IF/THEN/ELSE per Cowlishaw §2.7 (locate exact page in `docs/cowlishaw_index.md`); M2.5 cleaned shape (single `n = 0` at top, three-arg `m:` wrapper at foot passing path + `n` + `SIGL` to `lib/meditation.rexx`); station subtitle "At the Branch of the Road" (PLAN §11)
 - [ ] T009 [P] [US1] Write `solutions/07_about_select.rexx` teaching SELECT/WHEN/OTHERWISE/END per Cowlishaw §2.7 (`docs/cowlishaw_index.md`); include one `Scripture: least_astonishment` directive in the teaching block that turns on the OTHERWISE-required principle (FR-024, research.md §5); station subtitle "Of Many Ways"; M2.5 shape
 - [ ] T010 [P] [US1] Write `solutions/08_about_do_loops.rexx` teaching DO group / controlled DO / WHILE / UNTIL / FOREVER per Cowlishaw §2.7; station subtitle "The Returning of the Path"; M2.5 shape
 - [ ] T011 [P] [US1] Write `solutions/09_about_iterate_leave.rexx` teaching ITERATE and LEAVE per Cowlishaw §2.7 (two separate index rows); station subtitle "Of Skipping and Leaving" (research.md §4); M2.5 shape
@@ -59,12 +59,12 @@ Solutions first (Constitution Principle I — Solution-First Development; all di
 
 Derive koans from solutions (Principle I: koan = solution with answers replaced by `FILL_ME_IN`; per-pair the only diff is FILL_ME_IN ↔ value plus `'solutions/...'` ↔ `'koans/...'` in the `m:` wrapper):
 
-- [ ] T014 [P] [US1] Derive `koans/06_about_if.rexx` from `solutions/06_about_if.rexx`; verify `bin/pilgrimage` stops at first blank with `Damaged at: koans/06_about_if.rexx, line N` diagnostic; reapply solution and confirm runner advances
-- [ ] T015 [P] [US1] Derive `koans/07_about_select.rexx` from `solutions/07_about_select.rexx` preserving the `Scripture: least_astonishment` directive byte-for-byte; verify stop/advance probe
-- [ ] T016 [P] [US1] Derive `koans/08_about_do_loops.rexx`; verify stop/advance probe
-- [ ] T017 [P] [US1] Derive `koans/09_about_iterate_leave.rexx`; verify stop/advance probe
-- [ ] T018 [P] [US1] Derive `koans/10_about_signal.rexx`; verify stop/advance probe
-- [ ] T019 [P] [US1] Derive `koans/11_about_interpret.rexx`; verify stop/advance probe
+- [ ] T014 [P] [US1] Derive `koans/06_about_if.rexx` from `solutions/06_about_if.rexx` by replacing each canonical answer with `FILL_ME_IN`; switch the `m:` wrapper's path argument from `'solutions/06_about_if.rexx'` to `'koans/06_about_if.rexx'`; sanity-check the solution still runs green directly via `regina solutions/06_about_if.rexx` (zero output, RC 0). Runner-based stop/advance verification is deferred to T021's Stage II walk-through (the new koan must be in the manifest first, per T020)
+- [ ] T015 [P] [US1] Derive `koans/07_about_select.rexx` from `solutions/07_about_select.rexx` preserving the `Scripture: least_astonishment` directive byte-for-byte; switch `m:` wrapper path; sanity-check the solution via direct `regina` invocation. Runner probe deferred to T021
+- [ ] T016 [P] [US1] Derive `koans/08_about_do_loops.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T021
+- [ ] T017 [P] [US1] Derive `koans/09_about_iterate_leave.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T021
+- [ ] T018 [P] [US1] Derive `koans/10_about_signal.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T021
+- [ ] T019 [P] [US1] Derive `koans/11_about_interpret.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T021
 
 Manifest update + Stage II walk-through:
 
@@ -77,7 +77,7 @@ Manifest update + Stage II walk-through:
 
 ## Phase 4: US2 — Pilgrim walks Stage III (built-in toolbox) (Priority: P1)
 
-**Goal**: Six new Stage III koans (12–17) with matching solutions teaching `Cowlishaw §2.9` built-in families. Koans 12 binds `Scripture: everything_is_string`; koan 14 binds `Scripture: numbers_are_strings_too`.
+**Goal**: Six new Stage III koans (12–17) with matching solutions teaching `Cowlishaw §2.9` built-in families. Koan 12 binds `Scripture: everything_is_string`; koan 14 binds `Scripture: numbers_are_strings_too`. Every koan and its matching solution carry at least three teaching comment blocks and at least four assertions (SC-011 floor; applies to every solution-authoring task in this phase).
 
 **Independent Test**: Apply solutions 06–17, run `bin/pilgrimage` — full 18-row station list all `[ ok ]`, summary `Stations walked: 18 of 18.`, closing benediction, exit 0. Per-koan: solve N → runner stops at N+1; solving 17 reaches the benediction.
 
@@ -92,12 +92,12 @@ Solutions (parallel — different files):
 
 Derive koans:
 
-- [ ] T028 [P] [US2] Derive `koans/12_about_string_functions.rexx` preserving the `Scripture: everything_is_string` directive; verify stop/advance probe
-- [ ] T029 [P] [US2] Derive `koans/13_about_word_functions.rexx`; verify stop/advance probe
-- [ ] T030 [P] [US2] Derive `koans/14_about_arithmetic_functions.rexx` preserving the `Scripture: numbers_are_strings_too` directive; verify stop/advance probe
-- [ ] T031 [P] [US2] Derive `koans/15_about_conversion_functions.rexx`; verify stop/advance probe
-- [ ] T032 [P] [US2] Derive `koans/16_about_bit_functions.rexx`; verify stop/advance probe
-- [ ] T033 [P] [US2] Derive `koans/17_about_misc_functions.rexx`; verify stop/advance probe
+- [ ] T028 [P] [US2] Derive `koans/12_about_string_functions.rexx` from its solution preserving the `Scripture: everything_is_string` directive byte-for-byte; switch the `m:` wrapper's path argument to `'koans/12_about_string_functions.rexx'`; sanity-check the solution still runs green via direct `regina solutions/12_about_string_functions.rexx`. Runner-based stop/advance verification is deferred to T035's Stage III walk-through (the new koan must be in the manifest first, per T034)
+- [ ] T029 [P] [US2] Derive `koans/13_about_word_functions.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T035
+- [ ] T030 [P] [US2] Derive `koans/14_about_arithmetic_functions.rexx` from its solution preserving the `Scripture: numbers_are_strings_too` directive byte-for-byte; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T035
+- [ ] T031 [P] [US2] Derive `koans/15_about_conversion_functions.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T035
+- [ ] T032 [P] [US2] Derive `koans/16_about_bit_functions.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T035
+- [ ] T033 [P] [US2] Derive `koans/17_about_misc_functions.rexx` from its solution; switch `m:` wrapper path; sanity-check via direct `regina`. Runner probe deferred to T035
 
 Manifest update + Stage III walk-through:
 
@@ -168,7 +168,7 @@ Manifest update + Stage III walk-through:
 
 ## Phase 9: Polish & Cross-Cutting Concerns
 
-- [ ] T050 M2.5 forward-style enforcement: `grep -rE 'n = n \+ 1; *CALL m' koans/ solutions/` returns empty AND `grep -rE "CALL m '[a-z]+', [^,]+, [^,]+, n\b" koans/ solutions/` returns empty (FR-004, FR-005, SC-013)
+- [ ] T050 M2.5 forward-style enforcement and station-subtitle uniqueness. **(a)** Forbidden-pattern greps: `grep -rE 'n = n \+ 1; *CALL m' koans/ solutions/` returns empty AND `grep -rE "CALL m '[a-z]+', [^,]+, [^,]+, n\b" koans/ solutions/` returns empty (FR-004, FR-005, SC-013). **(b)** Subtitle uniqueness check: `grep -h 'Station:' koans/*.rexx | sed 's/^[[:space:]]*\*\{0,1\}[[:space:]]*Station:[[:space:]]*//' | sort | uniq -d` returns empty (FR-007 "Subtitles MUST be unique across the manifest").
 - [ ] T051 Stage I read-only verification: `git diff main -- koans/0[0-5]_*.rexx solutions/0[0-5]_*.rexx lib/meditation.rexx lib/stations.rexx bin/ docs/cowlishaw_index.md` returns empty (research.md §8; FR-019)
 - [ ] T052 Final acceptance pass: walk `quickstart.md` end-to-end on a fresh checkout; confirm SC-001 through SC-014 are all met; cross-reference against spec § Out of Scope (no Stage IV–VI content leaked); re-check Constitution five principles per plan.md Post-Design Re-Check table
 
