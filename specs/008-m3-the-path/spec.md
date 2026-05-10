@@ -117,6 +117,14 @@ table), §5 (runner architecture, scripture re-print), §8 (style
 guidelines including the M2.5 line shape), §9 (scripture mechanic),
 §11 (achievement output / station subtitles).
 
+## Clarifications
+
+### Session 2026-05-10
+
+- Q: What is the exact text shape of scripture amplification on failure? → A: Two-line block, Bathonian framing. Line 1: `From the Bathonian (Cowlishaw §N.N, p. NN):`. Line 2: principle text indented two spaces. (Locks FR-012.)
+- Q: How far does a `Scripture: <key>` directive's binding extend across consecutive `CALL m` lines? → A: Block-scoped. The directive binds every subsequent `CALL m` until the next teaching comment block (next `/*`) or end-of-file. Multi-assertion teaching blocks bind once. (Sharpens FR-024 and FR-025.)
+- Q: What is the closing benediction wording for the 18-station fully-solved fixture? → A: Enumerate the three completed stages by their PLAN §4 names: `"The pilgrim has walked the foundation, the path, and the tools. The path opens further."` Each successor milestone updates the line. (Locks FR-016 and the runner-smoke fixture content.)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Pilgrim walks Stage II, control flow (Priority: P1) 🎯 MVP
@@ -525,7 +533,20 @@ fully-solved corpus and confirm `diff -u tests/fixtures/runner_stdout.txt
   MUST be identical in shape to the Stage I failure output (no
   scripture lines). Scripture text MUST appear after the meditation
   diagnostic and before the runner's station-list and summary
-  output (Constitution Principle V — diagnostic first).
+  output (Constitution Principle V — diagnostic first). The
+  emitted text MUST take the following two-line shape:
+  - Line 1: `From the Bathonian (Cowlishaw §N.N, p. NN):` —
+    literal `From the Bathonian (` prefix, the citation in
+    canonical form `Cowlishaw §N.N, p. NN` (optionally followed
+    by ` — <heading>` per Constitution Principle III), literal
+    `):` suffix.
+  - Line 2: the principle text, indented two spaces from column
+    1, no surrounding quotes, terminated by a single newline.
+  No additional ornamentation, blank lines, or trailing
+  punctuation may surround the two-line block. The block sits
+  on its own — the meditation diagnostic and `Damaged at:` line
+  precede it without intervening blank lines; the runner's
+  station-list output follows.
 - **FR-013**: A passing assertion MUST NOT produce scripture
   output. Scripture is a failure-time amplification only.
 - **FR-014**: `bin/verify_solutions` MUST report 18 of 18
@@ -538,9 +559,11 @@ fully-solved corpus and confirm `diff -u tests/fixtures/runner_stdout.txt
   on the feature branch to match the post-M3 fully-solved walk
   byte-for-byte. The fixture grows from 12 lines (M2's six-station
   walk + benediction) to a length consistent with eighteen station
-  rows + summary + benediction. The closing benediction line MAY
-  be updated to reflect the larger journey or MAY be retained
-  verbatim — see Assumptions.
+  rows + summary + benediction. The closing benediction line MUST
+  read: `The pilgrim has walked the foundation, the path, and the
+  tools. The path opens further.` (per Clarifications session
+  2026-05-10). Each successor milestone updates the line to
+  enumerate its newly-completed stages.
 - **FR-017**: `bin/pilgrimage` against the post-M3 fully-solved
   corpus MUST exit 0 and produce stdout byte-identical to the
   updated `tests/fixtures/runner_stdout.txt` (modulo CRLF
@@ -593,28 +616,42 @@ fully-solved corpus and confirm `diff -u tests/fixtures/runner_stdout.txt
   block-comment line). The verb is case-sensitive (`Scripture:`,
   matching the existing `Station:` directive's case). The `<key>`
   MUST be one of the keys defined in `lib/scripture.rexx`
-  (initial set per FR-010). One directive binds the next
-  assertion that follows it within the same teaching comment
-  block. A directive MUST NOT appear outside a comment block; a
-  directive whose key does not resolve in `lib/scripture.rexx`
-  is a contributor error (forward enforcement is by review;
-  mechanical lint is out of scope per the Out of Scope section).
+  (initial set per FR-010). **Binding scope (block-scoped):**
+  the directive binds every `CALL m` assertion line that follows
+  it in source order, up to (but not including) the start of the
+  next teaching comment block — that is, the next subsequent
+  line whose first non-whitespace token is `/*` — or end-of-file,
+  whichever comes first. A multi-assertion teaching block
+  therefore binds once: every `CALL m` line that the block
+  introduces shares the directive's scripture key. A directive
+  MUST NOT appear outside a comment block; a directive whose key
+  does not resolve in `lib/scripture.rexx` is a contributor
+  error (forward enforcement is by review; mechanical lint is
+  out of scope per the Out of Scope section). At most one
+  `Scripture:` directive per teaching comment block is
+  permitted; a second directive in the same block is a
+  contributor error (forward enforcement by review).
 - **FR-025**: When `lib/pilgrimage.rexx` detects that a koan
   subprocess exited non-zero with a `Damaged at: <file>, line N`
   diagnostic on stdout, it MUST identify the failing assertion
-  (the `CALL m` on line N), search the koan's source for the
-  `Scripture: <key>` directive that binds to that assertion (per
-  FR-024's "next assertion in the same teaching comment block"
-  rule), and — if found — look up the key in `lib/scripture.rexx`
-  and emit the principle text and citation to stdout after the
-  failure diagnostic and before the runner's station-list output.
-  If no binding directive is found for the failing assertion, no
-  scripture text is emitted; the failure output retains its
-  Stage I shape. The exact text shape and the precise scope-rule
-  edge cases (e.g., what counts as "the same teaching comment
-  block" when assertions follow each other without intervening
-  comments) are locked in the runner contract artifact under
-  `specs/008-m3-the-path/contracts/` at planning time.
+  (the `CALL m` on line N), determine which `Scripture: <key>`
+  directive binds to that assertion under FR-024's block-scoped
+  rule, and — if a binding directive exists — look up the key in
+  `lib/scripture.rexx` and emit the two-line block defined in
+  FR-012 to stdout after the failure diagnostic and before the
+  runner's station-list output. **Mechanical scope resolution:**
+  walk backward from line N − 1 toward line 1; the first
+  `Scripture:` directive found *and* preceded by no intervening
+  teaching-block boundary (i.e., no `/*`-prefix line between the
+  directive and line N) binds the failing assertion. If a `/*`
+  is encountered before any `Scripture:` directive, the failing
+  assertion is not scripture-bound. If line N has no preceding
+  `Scripture:` directive in the file, the failing assertion is
+  not scripture-bound. In both unbound cases, no scripture text
+  is emitted; the failure output retains its Stage I shape. The
+  runner contract artifact under `specs/008-m3-the-path/contracts/`
+  at planning time pins down the exact stdout byte sequences and
+  the regex used to detect `Scripture:` and `/*` lines.
 
 ### Key Entities
 
@@ -773,18 +810,12 @@ fully-solved corpus and confirm `diff -u tests/fixtures/runner_stdout.txt
     capped at no more than seven (the count of PLAN.md §9
     keys), and no fewer than three. The final list is fixed
     during planning and recorded in the implementation artifact.
-- **Closing benediction wording.** The current Stage I-only
-  benediction reads: "The pilgrim has walked the foundation. The
-  path opens further." After M3, three valid options exist:
-  (a) keep verbatim — still accurate ("foundation" can be read
-  as "first foundations laid"); (b) update to reflect Stages
-  I–III complete (e.g., "The pilgrim has walked the foundation,
-  the path, and the tools."); (c) generalize to a milestone-
-  agnostic line that survives M4–M7 unchanged. The spec author's
-  default during planning is (b) for M3 and a generalized line
-  later; the runner-smoke fixture reflects whichever choice
-  lands. The choice is editorial; all three options are
-  acceptable.
+- **Closing benediction wording is locked** (Clarifications
+  session 2026-05-10): the post-M3 benediction reads "The
+  pilgrim has walked the foundation, the path, and the tools.
+  The path opens further." Each successor milestone updates the
+  line to enumerate its newly-completed stages by their PLAN §4
+  names. FR-016 and the runner-smoke fixture reflect this.
 - **Station subtitles for new koans.** PLAN.md §11 names three
   by example: 06 about_if → "At the Branch of the Road"; 07
   about_select → "Of Many Ways"; 08 about_do_loops → "The
