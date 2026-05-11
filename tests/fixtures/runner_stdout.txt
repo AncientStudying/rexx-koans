@@ -1,12 +1,24 @@
 THE PATH OF REXX
 
-  [  ok  ] 00 about_asserts      The First Truths
-  [  ok  ] 01 about_strings      Of the Word Made String
-  [  ok  ] 02 about_variables    The Naming of Things
-  [  ok  ] 03 about_expressions  Of Operators and Their Powers
-  [  ok  ] 04 about_clauses      The Shape of an Instruction
-  [  ok  ] 05 about_say          The Pilgrim Speaks
+  [  ok  ] 00 about_asserts               The First Truths
+  [  ok  ] 01 about_strings               Of the Word Made String
+  [  ok  ] 02 about_variables             The Naming of Things
+  [  ok  ] 03 about_expressions           Of Operators and Their Powers
+  [  ok  ] 04 about_clauses               The Shape of an Instruction
+  [  ok  ] 05 about_say                   The Pilgrim Speaks
+  [  ok  ] 06 about_if                    At the Branch of the Road
+  [  ok  ] 07 about_select                Of Many Ways
+  [  ok  ] 08 about_do_loops              The Returning of the Path
+  [  ok  ] 09 about_iterate_leave         Of Skipping and Leaving
+  [  ok  ] 10 about_signal                When the Path Bends
+  [  ok  ] 11 about_interpret             What is Spoken Becomes Done
+  [  ok  ] 12 about_string_functions      Of Letters and Their Manipulation
+  [  ok  ] 13 about_word_functions        Of Words and Their Counting
+  [  ok  ] 14 about_arithmetic_functions  Of Numbers and Their Shape
+  [  ok  ] 15 about_conversion_functions  Between One Form and Another
+  [  ok  ] 16 about_bit_functions         Down to the Bits
+  [  ok  ] 17 about_misc_functions        Of Time and Chance
 
-  Stations walked: 6 of 6.
+  Stations walked: 18 of 18.
 
-  The pilgrim has walked the foundation. The path opens further.
+  The pilgrim has walked the foundation, the path, and the tools. The path opens further.
